@@ -1,0 +1,72 @@
+{
+  "name": "fastify-service-skeleton",
+  "version": "0.1.0",
+  "description": "Create fastify based microservices even faster.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:cov": "jest --coverage",
+    "test:debug": "node --inspect-brk -r ts-node/register node_modules/.bin/jest --runInBand"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/micro-tools/fastify-service-skeleton.git"
+  },
+  "keywords": [
+    "fastify",
+    "microservice"
+  ],
+  "author": "Juri Wiens <juriwiens@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/micro-tools/fastify-service-skeleton/issues"
+  },
+  "homepage": "https://github.com/micro-tools/fastify-service-skeleton#readme",
+  "dependencies": {
+    "fastify": "^2.11.0",
+    "fastify-plugin": "^1.6.0",
+    "fastify-sensible": "^2.1.1",
+    "pino": "^5.15.0",
+    "under-pressure": "^3.2.1",
+    "uuid": "^3.3.3"
+  },
+  "devDependencies": {
+    "@types/flush-write-stream": "^1.0.0",
+    "@types/jest": "^24.0.23",
+    "@types/node": "^12.12.17",
+    "@types/pino": "^5.14.0",
+    "@types/split2": "^2.1.6",
+    "@types/uuid": "^3.4.6",
+    "flush-write-stream": "^2.0.0",
+    "jest": "^24.9.0",
+    "pino-pretty": "^3.5.0",
+    "prettier": "^1.19.1",
+    "rxjs": "^6.5.3",
+    "split2": "^3.1.1",
+    "strict-event-emitter-types": "^2.0.0",
+    "ts-jest": "^24.2.0",
+    "ts-node": "^8.5.4",
+    "typescript": "^3.7.3"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
+    "rootDir": "src",
+    "testRegex": ".spec.ts$",
+    "transform": {
+      "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "collectCoverageFrom": [
+      "**/*.(t|j)s"
+    ],
+    "coverageDirectory": "../coverage",
+    "testEnvironment": "node"
+  }
+}
