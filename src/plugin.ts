@@ -27,7 +27,7 @@ export function createPlugin<
     HttpServer,
     HttpRequest,
     HttpResponse,
-    Options,
+    Options | undefined,
     PluginInstance
   >,
   // global = false,

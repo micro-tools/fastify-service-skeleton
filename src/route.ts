@@ -10,6 +10,20 @@ export type Request<
 
 export type Response = fastify.FastifyReply<http.ServerResponse>
 
+export type RequestHandler<
+  Query = fastify.DefaultQuery,
+  Params = fastify.DefaultParams,
+  Headers = fastify.DefaultHeaders,
+  Body = fastify.DefaultBody
+> = fastify.RequestHandler<
+  http.IncomingMessage,
+  http.ServerResponse,
+  Query,
+  Params,
+  Headers,
+  Body
+>
+
 export type RouteOptions<
   Query = fastify.DefaultQuery,
   Params = fastify.DefaultParams,
