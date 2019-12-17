@@ -2,3 +2,6 @@ src/
 build/*.js.map
 example/
 tmp/
+.vscode/
+.editorconfig
+.prettierrc
