@@ -4,20 +4,27 @@ import { createPlugin } from '../plugin'
 import { iso8601WithLocalOffset } from './utils/date_utils'
 import { createLogger, LoggerConfig } from './logger'
 import correlationIdPlugin from './correlation_id'
+import { assertIsNotUndefined, assert } from '../utils/assert'
 
 export default createPlugin<LoggerConfig>(
-  fastifyPlugin(async (app, opts) => {
+  fastifyPlugin(async (app, loggerConfig) => {
+    assertIsNotUndefined(loggerConfig, 'loggerConfig')
+
     app.register(correlationIdPlugin)
 
-    const requestLogger = createLogger('application', opts)
-    const accessLogger = createLogger('access', opts)
+    const accessLogger = createLogger('access', loggerConfig)
 
     app.addHook('onRequest', (request, reply, done) => {
+      // add receivedAt so we can log it on response
       request.receivedAt = new Date()
-      request.log = requestLogger.child({
-        request_id: request.id,
-        'correlation-id': request.correlationId,
-      })
+      // override request and reply logger with a request specific one if it has a child method
+      assert(request.log === reply.log)
+      if (typeof request.log.child === 'function') {
+        request.log = reply.log = (request.log as import('pino').Logger).child({
+          request_id: request.id,
+          'correlation-id': request.correlationId,
+        })
+      }
       done()
     })
 

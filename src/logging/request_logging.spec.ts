@@ -48,16 +48,16 @@ describe('Request Logging', () => {
   it('adds request and correlation ids to logs created in the context of a request', async () => {
     const logDestination = createDestinationStream()
     const app = await Fastify({
-      // disable default logging
-      logger: false,
-      disableRequestLogging: true,
+      logger: logDestination, // enable logging in general and collect logs in a custom destination
+      disableRequestLogging: true, // disable fastify's default request logging
     })
       .register(requestLoggingPlugin, {
         serviceName,
         destination: logDestination,
       })
       .get('/', (request, reply) => {
-        request.log.info('in the context of a request')
+        request.log.info('in the context of a request #1')
+        reply.log.info('in the context of a request #2')
         reply.code(200).send()
       })
       .ready()
@@ -66,7 +66,7 @@ describe('Request Logging', () => {
     const [response, logs] = await Promise.all([responsePromise, logsPromise])
 
     expect(response.statusCode).toBe(200)
-    expect(logs).toHaveLength(2) // one access log + the one from the request handler
+    expect(logs).toHaveLength(3) // one access log + the two from the request handler
     for (const log of logs) {
       expect(typeof log.request_id).toBe('number')
       expect(typeof log['correlation-id']).toBe('string')
