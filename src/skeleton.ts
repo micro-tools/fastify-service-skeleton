@@ -5,6 +5,7 @@ import { createLogger, Logger, LoggerConfig } from './logging/logger'
 import { orderlyExitProcess } from './orderly_exit_process'
 import { healthCheckPlugin, HealthCheckOptions } from './health_check'
 import { metricsPlugin, MetricsOptions } from './metrics'
+import { httpClientPlugin, HttpClientOptions } from './http_client'
 
 export function createServiceSkeleton(
   opts: ServiceSkeletonOptions,
@@ -27,6 +28,9 @@ export function createServiceSkeleton(
     }
     if (opts.plugins?.healthCheck !== false) {
       app.register(healthCheckPlugin, opts.plugins?.healthCheck)
+    }
+    if (opts.plugins?.httpClient !== false) {
+      app.register(httpClientPlugin, opts.plugins?.httpClient)
     }
     if (opts.plugins?.sensible !== false) {
       app.register(fastifySensible)
@@ -61,6 +65,7 @@ export interface ServiceSkeletonOptions {
         metrics?: MetricsOptions | false
         orderlyExitProcess?: boolean
         healthCheck?: HealthCheckOptions | false
+        httpClient?: HttpClientOptions | false
         sensible?: boolean
         underPressure?: underPressure.UnderPressureOptions | false
       }
