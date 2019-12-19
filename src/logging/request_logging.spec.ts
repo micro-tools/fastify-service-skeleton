@@ -4,7 +4,7 @@ import {
   createDestinationStream,
   collectLogsUntil,
 } from './utils/logger_test_utils'
-import requestLoggingPlugin from './request_logging'
+import { requestLoggingPlugin } from './request_logging'
 
 describe('Request Logging', () => {
   const serviceName = 'request-logging-test'

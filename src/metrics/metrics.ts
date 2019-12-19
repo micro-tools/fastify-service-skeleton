@@ -1,16 +1,16 @@
 import promClient from 'prom-client'
 import fastifyPlugin from 'fastify-plugin'
-import { createPlugin } from '../plugin'
-import defaultMetrics, { DefaultMetricsOptions } from './default_metrics'
-import requestMetrics from './request_metrics'
+import { Plugin } from '../plugin'
+import { defaultMetricsPlugin, DefaultMetricsOptions } from './default_metrics'
+import { requestMetricsPlugin } from './request_metrics'
 
-export default createPlugin<MetricsOptions>(
-  fastifyPlugin(async (app, opts) => {
+export const metricsPlugin: Plugin<MetricsOptions> = fastifyPlugin(
+  async (app, opts) => {
     if (opts?.defaultMetrics !== false) {
-      app.register(defaultMetrics)
+      app.register(defaultMetricsPlugin)
     }
     if (opts?.requestMetrics) {
-      app.register(requestMetrics)
+      app.register(requestMetricsPlugin)
     }
 
     app.route({
@@ -22,7 +22,7 @@ export default createPlugin<MetricsOptions>(
           .send(promClient.register.metrics())
       },
     })
-  }),
+  },
 )
 
 export interface MetricsOptions {

@@ -1,10 +1,5 @@
 import Fastify from 'fastify'
-import { createLogger } from './logger'
-import {
-  createDestinationStream,
-  collectLogsUntil,
-} from './utils/logger_test_utils'
-import correlationIdPlugin from './correlation_id'
+import { correlationIdPlugin } from './correlation_id'
 
 describe('Correlation ID', () => {
   it('adds `correlationId` to request', async () => {

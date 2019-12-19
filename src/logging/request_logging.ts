@@ -1,13 +1,13 @@
 import { IncomingHttpHeaders } from 'http'
 import fastifyPlugin from 'fastify-plugin'
-import { createPlugin } from '../plugin'
+import { Plugin } from '../plugin'
 import { iso8601WithLocalOffset } from './utils/date_utils'
 import { createLogger, LoggerConfig } from './logger'
-import correlationIdPlugin from './correlation_id'
+import { correlationIdPlugin } from './correlation_id'
 import { assertIsNotUndefined, assert } from '../utils/assert'
 
-export default createPlugin<LoggerConfig>(
-  fastifyPlugin(async (app, loggerConfig) => {
+export const requestLoggingPlugin: Plugin<LoggerConfig> = fastifyPlugin(
+  async (app, loggerConfig) => {
     assertIsNotUndefined(loggerConfig, 'loggerConfig')
 
     app.register(correlationIdPlugin)
@@ -38,7 +38,7 @@ export default createPlugin<LoggerConfig>(
       })
       done()
     })
-  }),
+  },
 )
 
 function extractOriginalIp(headers: IncomingHttpHeaders): string | null {

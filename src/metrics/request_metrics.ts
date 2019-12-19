@@ -1,7 +1,7 @@
 import promClient from 'prom-client'
-import { createPlugin } from '../plugin'
+import { Plugin } from '../plugin'
 
-export default createPlugin(async app => {
+export const requestMetricsPlugin: Plugin<{}> = async app => {
   const requestHistogram = new promClient.Histogram({
     name: 'http_request_duration_seconds',
     help:
@@ -20,4 +20,4 @@ export default createPlugin(async app => {
     )
     done()
   })
-})
+}

@@ -3,8 +3,8 @@ import fastifySensible from 'fastify-sensible'
 import underPressure from 'under-pressure'
 import { createLogger, Logger, LoggerConfig } from './logging/logger'
 import { orderlyExitProcess } from './orderly_exit_process'
-import healthCheck, { HealthCheckOptions } from './health_check'
-import metrics, { MetricsOptions } from './metrics'
+import { healthCheckPlugin, HealthCheckOptions } from './health_check'
+import { metricsPlugin, MetricsOptions } from './metrics'
 
 export function createServiceSkeleton(
   opts: ServiceSkeletonOptions,
@@ -23,10 +23,10 @@ export function createServiceSkeleton(
       orderlyExitProcess(logger)
     }
     if (opts.plugins?.metrics !== false) {
-      app.register(metrics, opts.plugins?.metrics)
+      app.register(metricsPlugin, opts.plugins?.metrics)
     }
     if (opts.plugins?.healthCheck !== false) {
-      app.register(healthCheck, opts.plugins?.healthCheck)
+      app.register(healthCheckPlugin, opts.plugins?.healthCheck)
     }
     if (opts.plugins?.sensible !== false) {
       app.register(fastifySensible)

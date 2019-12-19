@@ -1,17 +1,18 @@
 import promClient from 'prom-client'
-import { createPlugin } from '../plugin'
+import { Plugin } from '../plugin'
 
-export default createPlugin<DefaultMetricsOptions>(async (app, opts) => {
-  const defaultMetricsCollectInterval: NodeJS.Timeout = promClient.collectDefaultMetrics(
-    opts,
-  )
+export const defaultMetricsPlugin: Plugin<DefaultMetricsOptions> = async (
+  app,
+  opts,
+) => {
+  const collectInterval: NodeJS.Timeout = promClient.collectDefaultMetrics(opts)
 
   app.addHook('onClose', (app, done) => {
-    if (defaultMetricsCollectInterval) {
-      clearInterval(defaultMetricsCollectInterval)
+    if (collectInterval) {
+      clearInterval(collectInterval)
     }
     done()
   })
-})
+}
 
 export type DefaultMetricsOptions = promClient.DefaultMetricsCollectorConfiguration
