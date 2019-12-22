@@ -1,5 +1,7 @@
 import { ok, AssertionError } from 'assert'
 
+export { AssertionError }
+
 export const assert: (
   condition: any,
   message?: string | Error,
@@ -25,5 +27,21 @@ export function assertIsNotNullish<T>(
   )
 }
 
-type NotUndefined<T> = T extends undefined ? never : T
-type NotNullish<T> = T extends undefined | null ? never : T
+export function assertIsNonEmptyObject<T extends object>(
+  obj: T | {},
+  valueName?: string,
+): asserts obj is T {
+  for (const key in obj) {
+    if (hasOwnProperty.call(obj, key)) {
+      return
+    }
+  }
+  throw new AssertionError({
+    message: `Expected ${valueName || 'value'} to be a non-empty object`,
+  })
+}
+
+const hasOwnProperty = Object.prototype.hasOwnProperty
+
+export type NotUndefined<T> = T extends undefined ? never : T
+export type NotNullish<T> = T extends undefined | null ? never : T
