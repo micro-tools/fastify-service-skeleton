@@ -1,8 +1,7 @@
 import fastify from 'fastify'
 import uuidV4 from 'uuid/v4'
 import { httpClientPlugin } from './http_client'
-import fastifyPlugin from 'fastify-plugin'
-import { correlationIdPlugin } from './logging/correlation_id'
+import { correlationIdPlugin } from './correlation_id/correlation_id'
 
 describe('httpClient plugin', () => {
   it('allows to create a request specific httpClient', async () => {

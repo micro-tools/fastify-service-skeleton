@@ -1,20 +1,19 @@
 import axios, { AxiosRequestConfig, AxiosInstance } from 'axios'
 import { Plugin } from './plugin'
 import fastifyPlugin = require('fastify-plugin')
-import { assert } from './utils/assert'
 
 export const httpClientPlugin: Plugin<HttpClientOptions> = fastifyPlugin(
   async (app, opts) => {
     const correlationIdHeader = opts.correlationIdHeader || 'Correlation-Id'
 
+    app.decorateRequest('createHttpClient', null, ['correlationId'])
     app.addHook('onRequest', (request, reply, done) => {
-      const createHttpClient: AxiosFactory = config =>
+      request.createHttpClient = config =>
         axios.create({
           ...opts.axiosDefaults,
           ...config,
           headers: { [correlationIdHeader]: request.correlationId },
         })
-      app.decorateRequest('createHttpClient', createHttpClient)
       done()
     })
   },
