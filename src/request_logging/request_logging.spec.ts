@@ -3,8 +3,9 @@ import Fastify from 'fastify'
 import {
   createDestinationStream,
   collectLogsUntil,
-} from './utils/logger_test_utils'
+} from '../logger/logger_test_utils'
 import { requestLoggingPlugin } from './request_logging'
+import { correlationIdPlugin } from '../correlation_id/correlation_id'
 
 describe('Request Logging', () => {
   const serviceName = 'request-logging-test'
@@ -16,9 +17,9 @@ describe('Request Logging', () => {
       logger: false,
       disableRequestLogging: true,
     })
+      .register(correlationIdPlugin)
       .register(requestLoggingPlugin, {
-        serviceName,
-        destination: logDestination,
+        accessLogger: { destination: logDestination },
       })
       .get('/', (request, reply) => {
         reply.code(200).send()
@@ -51,9 +52,9 @@ describe('Request Logging', () => {
       logger: logDestination, // enable logging in general and collect logs in a custom destination
       disableRequestLogging: true, // disable fastify's default request logging
     })
+      .register(correlationIdPlugin)
       .register(requestLoggingPlugin, {
-        serviceName,
-        destination: logDestination,
+        accessLogger: { destination: logDestination },
       })
       .get('/', (request, reply) => {
         request.log.info('in the context of a request #1')

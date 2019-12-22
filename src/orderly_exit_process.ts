@@ -1,4 +1,4 @@
-import { Logger, createExitListener } from './logging/logger'
+import { Logger, createExitListener } from './logger/logger'
 
 export function orderlyExitProcess(logger: Logger) {
   process.on(

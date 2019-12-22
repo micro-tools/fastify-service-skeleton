@@ -1,7 +1,7 @@
 import {
   createDestinationStream,
   collectLogsUntil,
-} from './logging/utils/logger_test_utils'
+} from './logger/logger_test_utils'
 import { createServiceSkeleton } from './skeleton'
 
 describe('serviceSkeleton', () => {
@@ -21,10 +21,7 @@ describe('serviceSkeleton', () => {
     const logDestination = createDestinationStream()
     const app = await createServiceSkeleton({
       serviceName,
-      logger: {
-        serviceName,
-        destination: logDestination,
-      },
+      logger: { destination: logDestination },
       plugins: false,
     })
       .get('/', (request, reply) => {

@@ -1,11 +1,10 @@
 import { createLogger } from './logger'
-import { nextLog, createDestinationStream } from './utils/logger_test_utils'
+import { nextLog, createDestinationStream } from './logger_test_utils'
 
 describe('Logger', () => {
   it('logs required fields', async () => {
     const destination = createDestinationStream()
-    const logger = createLogger('application', {
-      serviceName: 'myService',
+    const logger = createLogger('myService', 'application', {
       destination,
     })
     const logPromise = nextLog(destination)
@@ -28,8 +27,7 @@ describe('Logger', () => {
 
   it('can be extended with child properties', async () => {
     const destination = createDestinationStream()
-    const logger = createLogger('application', {
-      serviceName: 'myService',
+    const logger = createLogger('myService', 'application', {
       destination,
     })
     const childLogger = logger.child({ childProp: 'childProp' })

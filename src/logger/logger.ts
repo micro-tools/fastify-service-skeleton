@@ -1,34 +1,32 @@
 import * as os from 'os'
 import pino, { Logger } from 'pino'
-import { iso8601WithLocalOffset } from './utils/date_utils'
+import { iso8601WithLocalOffset } from '../utils/date_utils'
 
 export function createLogger(
+  serviceName: string,
   type: 'application' | 'access',
-  config: LoggerConfig,
+  opts?: LoggerOptions,
 ): Logger {
   const baseDefaults = {
     log_type: type,
     application_type: 'service',
-    service: config.serviceName,
+    service: serviceName,
     host: os.hostname(),
   }
   const pinoOpts: pino.LoggerOptions = {
-    base: config.base ? { ...baseDefaults, ...config.base } : baseDefaults,
+    base: opts?.base ? { ...baseDefaults, ...opts.base } : baseDefaults,
     timestamp: epochTimeAndIso8601WithLocalOffset,
     changeLevelName: 'loglevel',
     useLevelLabels: true,
     customLevels: uppercasePinoLevels,
-    ...config,
+    ...opts,
   }
-  return config.destination
-    ? pino(pinoOpts, config.destination)
-    : pino(pinoOpts)
+  return opts?.destination ? pino(pinoOpts, opts?.destination) : pino(pinoOpts)
 }
 
 export const createExitListener = pino.final
 
-export interface LoggerConfig extends pino.LoggerOptions {
-  serviceName: string
+export interface LoggerOptions extends pino.LoggerOptions {
   destination?: pino.DestinationStream
 }
 

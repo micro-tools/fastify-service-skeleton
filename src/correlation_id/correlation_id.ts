@@ -3,10 +3,11 @@ import fastifyPlugin from 'fastify-plugin'
 import { Plugin } from '../plugin'
 
 export const correlationIdPlugin: Plugin<CorrelationIdOptions> = fastifyPlugin(
-  async (app, opts) => {
+  async function correlationIdPlugin(app, opts) {
     const header = opts.header || 'correlation-id'
+    app.decorateRequest('correlationId', '')
     app.addHook('onRequest', (request, reply, done) => {
-      app.decorateRequest('correlationId', request.headers[header] || uuidV4())
+      request.correlationId = request.headers[header] || uuidV4()
       done()
     })
   },
