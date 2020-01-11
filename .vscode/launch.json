@@ -26,15 +26,11 @@
       "type": "node",
       "request": "launch",
       "name": "Run Current TS File",
-      // "runtimeVersion": "11.15.0",
       "args": ["${file}"],
-      "runtimeArgs": ["-r", "ts-node/register"],
+      "runtimeArgs": ["-r", "ts-node/register/transpile-only"],
       "console": "integratedTerminal",
       "smartStep": true,
-      "showAsyncStacks": true,
-      "env": {
-        "BIGTABLE_EMULATOR_HOST": "localhost:8086"
-      }
+      "showAsyncStacks": true
     }
   ]
 }
