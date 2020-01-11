@@ -2,10 +2,13 @@ import { ok, AssertionError } from 'assert'
 
 export { AssertionError }
 
-export const assert: (
+export function assert(
   condition: any,
-  message?: string | Error,
-) => asserts condition = ok
+  message?: string | Error | undefined,
+  resultHandler?: (result: boolean) => void,
+): asserts condition {
+  return ok(condition, message)
+}
 
 export function assertIsNotUndefined<T>(
   value: T,
