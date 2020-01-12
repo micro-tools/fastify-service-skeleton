@@ -1,16 +1,17 @@
 import promClient from 'prom-client'
 import fastifyPlugin from 'fastify-plugin'
 import { Plugin } from '../plugin'
-import { defaultMetricsPlugin, DefaultMetricsOptions } from './default_metrics'
-import { requestMetricsPlugin } from './request_metrics'
+import { collectDefaultMetrics, DefaultMetricsOptions } from './default_metrics'
+import { collectRequestMetrics } from './request_metrics'
+import { isOptionEnabled, Enableable } from '../utils/options'
 
 export const metricsPlugin: Plugin<MetricsOptions> = fastifyPlugin(
   async (app, opts) => {
-    if (opts?.defaultMetrics !== false) {
-      app.register(defaultMetricsPlugin)
+    if (isOptionEnabled(opts.defaultMetrics)) {
+      collectDefaultMetrics(app, opts.defaultMetrics)
     }
-    if (opts?.requestMetrics) {
-      app.register(requestMetricsPlugin)
+    if (isOptionEnabled(opts?.requestMetrics)) {
+      collectRequestMetrics(app)
     }
 
     app.route({
@@ -27,6 +28,6 @@ export const metricsPlugin: Plugin<MetricsOptions> = fastifyPlugin(
 
 export interface MetricsOptions {
   url?: string
-  defaultMetrics?: DefaultMetricsOptions
+  defaultMetrics?: Enableable<DefaultMetricsOptions>
   requestMetrics?: boolean
 }

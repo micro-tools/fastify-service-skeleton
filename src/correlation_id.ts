@@ -1,6 +1,6 @@
 import uuidV4 from 'uuid/v4'
 import fastifyPlugin from 'fastify-plugin'
-import { Plugin } from '../plugin'
+import { Plugin } from './plugin'
 
 export const correlationIdPlugin: Plugin<CorrelationIdOptions> = fastifyPlugin(
   async function correlationIdPlugin(app, opts) {

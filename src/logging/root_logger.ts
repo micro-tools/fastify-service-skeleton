@@ -1,14 +1,13 @@
 import * as os from 'os'
-import pino, { Logger } from 'pino'
+import pino from 'pino'
+import { Logger, LoggingOptions } from './logging.types'
 import { iso8601WithLocalOffset } from '../utils/date_utils'
 
-export function createLogger(
+export function createRootLogger(
   serviceName: string,
-  type: 'application' | 'access',
-  opts?: LoggerOptions,
-): Logger {
+  opts?: LoggingOptions,
+): RootLogger {
   const baseDefaults = {
-    log_type: type,
     application_type: 'service',
     service: serviceName,
     host: os.hostname(),
@@ -24,13 +23,11 @@ export function createLogger(
   return opts?.destination ? pino(pinoOpts, opts?.destination) : pino(pinoOpts)
 }
 
-export const createExitListener = pino.final
-
-export interface LoggerOptions extends pino.LoggerOptions {
-  destination?: pino.DestinationStream
+export interface RootLogger {
+  child: Logger['child']
+  level: Logger['level']
+  bindings: Logger['bindings']
 }
-
-export { Logger }
 
 const uppercasePinoLevels = Object.entries(pino.levels.values).reduce<
   typeof pino.levels.values

@@ -1,10 +1,10 @@
+import { FastifyInstance } from 'fastify'
 import promClient from 'prom-client'
-import { Plugin } from '../plugin'
 
-export const defaultMetricsPlugin: Plugin<DefaultMetricsOptions> = async (
-  app,
-  opts,
-) => {
+export function collectDefaultMetrics(
+  app: FastifyInstance,
+  opts?: DefaultMetricsOptions,
+): void {
   const collectInterval: NodeJS.Timeout = promClient.collectDefaultMetrics(opts)
 
   app.addHook('onClose', (app, done) => {

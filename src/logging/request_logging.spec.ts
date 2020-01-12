@@ -1,26 +1,23 @@
 import { isIP } from 'net'
-import Fastify from 'fastify'
-import {
-  createDestinationStream,
-  collectLogsUntil,
-} from '../logger/logger_test_utils'
-import { requestLoggingPlugin } from './request_logging'
-import { correlationIdPlugin } from '../correlation_id/correlation_id'
+import { createDestinationStream, collectLogsUntil } from './logger_test_utils'
+import { createServiceSkeleton } from '../skeleton'
 
 describe('Request Logging', () => {
   const serviceName = 'request-logging-test'
 
   it('writes access logs with required fields on response', async () => {
     const logDestination = createDestinationStream()
-    const app = await Fastify({
-      // disable default logging
-      logger: false,
-      disableRequestLogging: true,
+    const requestIdLogLabel = 'test_req_id'
+    const app = await createServiceSkeleton({
+      serviceName,
+      fastify: { requestIdLogLabel },
+      enablePluginsByDefault: false,
+      logging: { destination: logDestination },
+      plugins: {
+        correlationId: { enable: true },
+        requestLogging: { enable: true },
+      },
     })
-      .register(correlationIdPlugin)
-      .register(requestLoggingPlugin, {
-        accessLogger: { destination: logDestination },
-      })
       .get('/', (request, reply) => {
         reply.code(200).send()
       })
@@ -34,6 +31,7 @@ describe('Request Logging', () => {
     expect(accessLogs).toHaveLength(1)
     for (const log of accessLogs) {
       expect(log.loglevel).toBe('INFO')
+      expect(log[requestIdLogLabel]).toBeTruthy()
       expect(isIP(log.remote_address))
       expect(Number.isInteger(log.response_time))
       expect(log.response_time).toBeGreaterThan(0)
@@ -42,20 +40,26 @@ describe('Request Logging', () => {
         Date.now(),
       )
       expect(typeof log['correlation-id']).toBe('string')
+      // TODO
+      // expect(typeof log.protocol).toBe('string')
+      // expect(typeof log.query_string).toBe('string')
+      expect(log.status).toBeGreaterThanOrEqual(200)
+      expect(log.status).toBeLessThan(600)
     }
     await app.close()
   })
 
   it('adds request and correlation ids to logs created in the context of a request', async () => {
     const logDestination = createDestinationStream()
-    const app = await Fastify({
-      logger: logDestination, // enable logging in general and collect logs in a custom destination
-      disableRequestLogging: true, // disable fastify's default request logging
+    const app = await createServiceSkeleton({
+      serviceName,
+      enablePluginsByDefault: false,
+      logging: { destination: logDestination },
+      plugins: {
+        correlationId: { enable: true },
+        requestLogging: { enable: true },
+      },
     })
-      .register(correlationIdPlugin)
-      .register(requestLoggingPlugin, {
-        accessLogger: { destination: logDestination },
-      })
       .get('/', (request, reply) => {
         request.log.info('in the context of a request #1')
         reply.log.info('in the context of a request #2')
@@ -69,7 +73,7 @@ describe('Request Logging', () => {
     expect(response.statusCode).toBe(200)
     expect(logs).toHaveLength(3) // one access log + the two from the request handler
     for (const log of logs) {
-      expect(typeof log.request_id).toBe('number')
+      expect(typeof log.request_id).toBeTruthy()
       expect(typeof log['correlation-id']).toBe('string')
     }
     await app.close()

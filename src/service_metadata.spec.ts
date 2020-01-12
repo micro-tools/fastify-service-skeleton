@@ -1,11 +1,11 @@
 import Fastify from 'fastify'
-import { serviceNamePlugin } from './service_name'
+import { serviceMetadata } from './service_metadata'
 
 describe('Service Name', () => {
   it('adds `serviceName` to fastify', async () => {
     const serviceName = 'service-name-test'
     const app = await Fastify()
-      .register(serviceNamePlugin, { serviceName })
+      .register(serviceMetadata, { serviceName })
       .ready()
 
     expect(app.hasDecorator('serviceName'))
