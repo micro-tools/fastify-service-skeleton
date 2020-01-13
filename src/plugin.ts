@@ -1,9 +1,8 @@
 import http from 'http'
 import fastify from 'fastify'
-// import fastifyPlugin from 'fastify-plugin'
 
 export type Plugin<
-  Options extends {},
+  Options,
   PluginInstance extends Function = Function,
   HttpServer = http.Server,
   HttpRequest = http.IncomingMessage,
