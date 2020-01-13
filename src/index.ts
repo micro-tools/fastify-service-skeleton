@@ -1,3 +1,7 @@
+export * from './http_client'
 export { createServiceSkeleton, ServiceSkeletonOptions } from './skeleton'
 export { Plugin } from './plugin'
 export { Request, Response, RequestHandler, RouteOptions } from './route'
+export { Logger } from './logging/logging.types'
+export * from './validator'
+export * from './utils/assert'
