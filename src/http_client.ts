@@ -52,7 +52,6 @@ function initClientOptions(
   options?: HttpClientOptions,
 ): HttpClientOptions {
   const defaults: HttpClientOptions = {
-    responseType: 'json',
     retry: { limit: 0 }, // do not retry by default
   }
   const enforcedOptions: HttpClientOptions = {
