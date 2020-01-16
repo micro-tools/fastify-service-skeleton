@@ -29,7 +29,12 @@ export const requestLoggingPlugin: Plugin<RequestLoggingOptions> = fastifyPlugin
     const accessLogger = app.rootLogger.child({ log_type: 'access' })
     app.addHook('onResponse', function(request, reply, done) {
       const { url, queryString } = separateQueryStringFromUrl(request.raw.url!)
-      accessLogger.info({
+      const logLevel =
+        typeof reply.context.config.accessLogLevel === 'string'
+          ? reply.context.config.accessLogLevel
+          : 'info'
+      const logFn = accessLogger[logLevel] || accessLogger.info
+      logFn.call(accessLogger, {
         [requestIdLogLabel]: request.id,
         remote_address: request.ip,
         response_time: Math.round(reply.getResponseTime()),

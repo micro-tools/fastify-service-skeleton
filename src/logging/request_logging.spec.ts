@@ -59,6 +59,36 @@ describe('Request Logging', () => {
     await app.close()
   })
 
+  test("the access logs' logLevel can be modified via route config", async () => {
+    const accessLogLevel = 'DEBUG'
+    const logDestination = createDestinationStream()
+    const app = await createServiceSkeleton({
+      serviceName,
+      enablePluginsByDefault: false,
+      logging: { destination: logDestination, level: accessLogLevel },
+      plugins: {
+        correlationId: { enable: true },
+        requestLogging: { enable: true },
+      },
+    })
+      .get('/test', {
+        config: { accessLogLevel },
+        handler(request, reply) {
+          reply.code(200).send()
+        },
+      })
+      .ready()
+    const responsePromise = app.inject({ method: 'GET', url: '/test' })
+    const logsPromise = collectLogsUntil(logDestination, responsePromise)
+    const [response, logs] = await Promise.all([responsePromise, logsPromise])
+    const accessLogs = logs.filter(log => log.log_type === 'access')
+
+    expect(response.statusCode).toBe(200)
+    expect(accessLogs).toHaveLength(1)
+    expect(accessLogs[0].loglevel).toBe(accessLogLevel)
+    await app.close()
+  })
+
   it('adds request and correlation ids to logs created in the context of a request', async () => {
     const logDestination = createDestinationStream()
     const app = await createServiceSkeleton({
