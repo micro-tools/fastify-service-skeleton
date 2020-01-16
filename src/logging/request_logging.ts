@@ -3,7 +3,6 @@ import fastifyPlugin from 'fastify-plugin'
 import { Plugin } from '../plugin'
 import { iso8601WithLocalOffset } from '../utils/date_utils'
 import { LoggerOptions } from './logging.types'
-import { URL } from 'url'
 
 export const requestLoggingPlugin: Plugin<RequestLoggingOptions> = fastifyPlugin(
   async function requestLoggingPlugin(
@@ -29,19 +28,38 @@ export const requestLoggingPlugin: Plugin<RequestLoggingOptions> = fastifyPlugin
     // write access logs
     const accessLogger = app.rootLogger.child({ log_type: 'access' })
     app.addHook('onResponse', function(request, reply, done) {
+      const { url, queryString } = separateQueryStringFromUrl(request.raw.url!)
       accessLogger.info({
         [requestIdLogLabel]: request.id,
         remote_address: request.ip,
         response_time: Math.round(reply.getResponseTime()),
         received_at: iso8601WithLocalOffset(request.receivedAt),
         'correlation-id': request.correlationId,
+        request_method: request.raw.method,
+        uri: url,
+        query_string: queryString,
         status: reply.statusCode,
+        user_agent: request.headers['user-agent'] || '',
       })
       done()
     })
   },
   { decorators: { fastify: ['rootLogger'], request: ['correlationId'] } },
 )
+
+function separateQueryStringFromUrl(
+  url: string,
+): { url: string; queryString: string } {
+  const querySeparatorIndex = url.indexOf('?')
+  if (querySeparatorIndex > -1) {
+    return {
+      url: url.slice(0, querySeparatorIndex),
+      queryString: url.slice(querySeparatorIndex),
+    }
+  } else {
+    return { url, queryString: '' }
+  }
+}
 
 function extractOriginalIp(headers: IncomingHttpHeaders): string | null {
   const header = headers['true-client-ip'] || headers['x-forwarded-for'] || null

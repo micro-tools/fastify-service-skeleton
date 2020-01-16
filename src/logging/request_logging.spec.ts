@@ -1,6 +1,7 @@
 import { isIP } from 'net'
 import { createDestinationStream, collectLogsUntil } from './logger_test_utils'
 import { createServiceSkeleton } from '../skeleton'
+import { HTTPInjectOptions } from 'fastify'
 
 describe('Request Logging', () => {
   const serviceName = 'request-logging-test'
@@ -18,11 +19,17 @@ describe('Request Logging', () => {
         requestLogging: { enable: true },
       },
     })
-      .get('/', (request, reply) => {
+      .get('/test', (request, reply) => {
         reply.code(200).send()
       })
       .ready()
-    const responsePromise = app.inject({ method: 'GET', url: '/' })
+    const request: HTTPInjectOptions = {
+      method: 'GET',
+      url: '/test',
+      query: { nums: [1, 2] },
+      headers: { 'user-agent': 'Some-Agent/1.0' },
+    }
+    const responsePromise = app.inject(request)
     const logsPromise = collectLogsUntil(logDestination, responsePromise)
     const [response, logs] = await Promise.all([responsePromise, logsPromise])
     const accessLogs = logs.filter(log => log.log_type === 'access')
@@ -40,11 +47,14 @@ describe('Request Logging', () => {
         Date.now(),
       )
       expect(typeof log['correlation-id']).toBe('string')
-      // TODO
-      // expect(typeof log.protocol).toBe('string')
-      // expect(typeof log.query_string).toBe('string')
+      expect(log.request_method).toBe('GET')
+      expect(log.uri).toBe('/test')
+      expect(log.query_string).toBe('?nums=1&nums=2')
       expect(log.status).toBeGreaterThanOrEqual(200)
       expect(log.status).toBeLessThan(600)
+      expect(log.user_agent).toBe(request.headers!['user-agent'])
+      // TODO
+      // expect(typeof log.protocol).toBe('string')
     }
     await app.close()
   })
