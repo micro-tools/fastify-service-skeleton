@@ -7,6 +7,7 @@ export const healthCheckPlugin: Plugin<HealthCheckOptions> = async (
   app.route({
     method: 'GET',
     url: opts?.url || '/admin/healthcheck',
+    config: { accessLogLevel: 'DEBUG' },
     handler(request, reply) {
       reply.code(200).send()
     },

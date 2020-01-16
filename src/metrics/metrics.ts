@@ -17,6 +17,7 @@ export const metricsPlugin: Plugin<MetricsOptions> = fastifyPlugin(
     app.route({
       method: 'GET',
       url: opts?.url || '/admin/metrics',
+      config: { accessLogLevel: 'DEBUG' },
       handler(request, reply) {
         reply
           .type('text/plain; version=0.0.4')
