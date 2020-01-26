@@ -14,12 +14,6 @@ export function createLoggers(
   return { rootLogger, appLogger }
 }
 
-export function isAppLoggerEnabled(
-  loggingOpts: ServiceSkeletonOptions['logging'],
-): boolean {
-  return loggingOpts !== false && loggingOpts?.appLogger !== false
-}
-
 export function checkLoggingOptionsPlausibility(
   appLogger: Logger,
   opts: ServiceSkeletonOptions,

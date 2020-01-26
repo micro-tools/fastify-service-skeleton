@@ -6,7 +6,6 @@ import hyperid from 'hyperid'
 import {
   createLoggers,
   checkLoggingOptionsPlausibility,
-  isAppLoggerEnabled,
 } from './logging/logging'
 import { Logger, LoggingOptions } from './logging/logging.types'
 import { RootLogger } from './logging/root_logger'
@@ -20,7 +19,11 @@ import {
   requestLoggingPlugin,
 } from './logging/request_logging'
 import { serviceMetadata } from './service_metadata'
-import { createIsOptionEnabled, Enableable } from './utils/options'
+import {
+  createIsOptionEnabled,
+  isOptionEnabled,
+  Enableable,
+} from './utils/options'
 
 export function createServiceSkeleton(
   opts: ServiceSkeletonOptions,
@@ -39,7 +42,8 @@ export function createServiceSkeleton(
   app.decorate('rootLogger', rootLogger)
   app.register(serviceMetadata, { serviceName: opts.serviceName })
 
-  // Enable all plugins unless explicitly disabled
+  // Enable all plugins unless explicitly disabled by default,
+  // but this behaviour can be modified via `enablePluginsByDefault`
   const isPluginEnabled = createIsOptionEnabled(opts.enablePluginsByDefault)
   if (isPluginEnabled(opts.plugins?.orderlyExitProcess)) {
     orderlyExitProcess(appLogger)
@@ -82,7 +86,7 @@ function adaptFastifyOptions(
     genReqId: hyperid({ urlSafe: true }),
   }
   const overrides = {
-    logger: isAppLoggerEnabled(loggingOpts) ? appLogger : false,
+    logger: isOptionEnabled(loggingOpts, true) ? appLogger : false,
   }
   return merge(defaults, fastifyOpts, overrides)
 }

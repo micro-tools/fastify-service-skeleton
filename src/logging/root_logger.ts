@@ -2,6 +2,7 @@ import * as os from 'os'
 import pino from 'pino'
 import { Logger, LoggingOptions } from './logging.types'
 import { iso8601WithLocalOffset } from '../utils/date_utils'
+import { isOptionEnabled } from '../utils/options'
 
 export function createRootLogger(
   serviceName: string,
@@ -13,6 +14,7 @@ export function createRootLogger(
     host: os.hostname(),
   }
   const pinoOpts: pino.LoggerOptions = {
+    enabled: isOptionEnabled(opts, true),
     base: opts?.base ? { ...baseDefaults, ...opts.base } : baseDefaults,
     timestamp: epochTimeAndIso8601WithLocalOffset,
     changeLevelName: 'loglevel',
