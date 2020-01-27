@@ -1,3 +1,4 @@
+import { URL } from 'url'
 import fastifyPlugin from 'fastify-plugin'
 import * as promClient from 'prom-client'
 import got, {
@@ -10,7 +11,6 @@ import got, {
 import merge from 'lodash.merge'
 import { Plugin } from './plugin'
 import { FastifyRequest } from 'fastify'
-import { URL } from 'url'
 import { Logger } from './logging/logging.types'
 
 export const httpClientPlugin: Plugin<HttpClientPluginOptions> = fastifyPlugin(
@@ -99,19 +99,22 @@ export class HttpClientInstrumentation {
 
   beforeRequest(options: NormalizedOptions): void {
     this.logger.debug(
-      { url: options.url, method: options.method },
+      { url: createUrlLog(options.url), method: options.method },
       'HTTP client starts request',
     )
   }
 
   receivedResponse(clientResponse: HttpClientResponse): void {
+    const url = new URL(clientResponse.url)
+    const requestUrl =
+      clientResponse.requestUrl !== clientResponse.url
+        ? new URL(clientResponse.requestUrl)
+        : null
     this.logger.debug(
       {
-        url: clientResponse.url,
+        url: createUrlLog(url),
         requested_url:
-          clientResponse.requestUrl !== clientResponse.url
-            ? clientResponse.requestUrl
-            : undefined,
+          requestUrl !== null ? createUrlLog(requestUrl) : undefined,
         method: clientResponse.request.options.method,
         status_code: clientResponse.statusCode,
         status_message: clientResponse.statusMessage,
@@ -126,7 +129,7 @@ export class HttpClientInstrumentation {
     if (typeof clientResponse.timings.phases.total === 'number') {
       HttpClientInstrumentation.requestDurations.observe(
         {
-          host: new URL(clientResponse.url).host || 'unknown',
+          host: url.host,
           status_code: clientResponse.statusCode,
           is_retry: Number(clientResponse.retryCount > 0),
           from_cache:
@@ -139,11 +142,9 @@ export class HttpClientInstrumentation {
     } else {
       this.logger.error(
         {
-          url: clientResponse.url,
+          url: createUrlLog(url),
           requested_url:
-            clientResponse.requestUrl !== clientResponse.url
-              ? clientResponse.requestUrl
-              : undefined,
+            requestUrl !== null ? createUrlLog(requestUrl) : undefined,
           method: clientResponse.request.options.method,
         },
         'HTTP client request duration metric is missing',
@@ -188,6 +189,16 @@ export class HttpClientInstrumentation {
       },
       `HTTP client error: ${error.message}`,
     )
+  }
+}
+
+function createUrlLog({ protocol, username, host, pathname, search }: URL) {
+  return {
+    protocol,
+    username: username || undefined,
+    host,
+    path: pathname,
+    query_params: search,
   }
 }
 
