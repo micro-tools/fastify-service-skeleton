@@ -455,20 +455,15 @@
   resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.149.tgz#1342d63d948c6062838fbf961012f74d4e638440"
   integrity sha512-ijGqzZt/b7BfzcK9vTrS6MFljQRPn5BFWOx8oE0GYxribu6uV+aA9zZuXI1zc/etK9E8nrgdoF2+LgUw7+9tJQ==
 
-"@types/node@*":
-  version "13.1.6"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-13.1.6.tgz#076028d0b0400be8105b89a0a55550c86684ffec"
-  integrity sha512-Jg1F+bmxcpENHP23sVKkNuU3uaxPnsBMW0cLjleiikFKomJQbsn0Cqk2yDvQArqzZN6ABfBkZ0To7pQ8sLdWDg==
+"@types/node@*", "@types/node@^13.5.0":
+  version "13.5.0"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-13.5.0.tgz#4e498dbf355795a611a87ae5ef811a8660d42662"
+  integrity sha512-Onhn+z72D2O2Pb2ql2xukJ55rglumsVo1H6Fmyi8mlU9SvKdBk/pUSUAiBY/d9bAOF7VVWajX3sths/+g6ZiAQ==
 
 "@types/node@^12.0.7":
   version "12.12.24"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-12.12.24.tgz#d4606afd8cf6c609036b854360367d1b2c78931f"
   integrity sha512-1Ciqv9pqwVtW6FsIUKSZNB82E5Cu1I2bBTj1xuIHXLe/1zYLl3956Nbhg2MzSYHVfl9/rmanjbQIb7LibfCnug==
-
-"@types/node@^13.5.0":
-  version "13.5.0"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-13.5.0.tgz#4e498dbf355795a611a87ae5ef811a8660d42662"
-  integrity sha512-Onhn+z72D2O2Pb2ql2xukJ55rglumsVo1H6Fmyi8mlU9SvKdBk/pUSUAiBY/d9bAOF7VVWajX3sths/+g6ZiAQ==
 
 "@types/pino-std-serializers@*":
   version "2.4.0"
@@ -476,9 +471,9 @@
   integrity sha512-eAdu+NW1IkCdmp85SnhyKha+OOREQMT9lXaoICQxa7bhSauRiLzu3WSNt9Mf2piuJvWeXF/G0hGWHr63xNpIRA==
 
 "@types/pino@^5.15.3":
-  version "5.15.3"
-  resolved "https://registry.yarnpkg.com/@types/pino/-/pino-5.15.3.tgz#58cfded34b5726e5023676d5594053dcbc9f18ef"
-  integrity sha512-MwTAhNFsARp+SDq2VoVE0yn0KtDsQLwZgk5AglA2xnz1d/UBWg5vsUgz3HFAc+mCnBsjMvW11Ej9QgBsgYV8uA==
+  version "5.15.4"
+  resolved "https://registry.yarnpkg.com/@types/pino/-/pino-5.15.4.tgz#64559cb993726a27de5f1f8c991d2ae53e484d30"
+  integrity sha512-7DaTWeUPerXShJICqXwe/igZknWSGLHf+S3L6lBvMRLeLoi27kvP+nnZKS1x2wzLGInfUJuCgo1OW07JbCQKPQ==
   dependencies:
     "@types/node" "*"
     "@types/pino-std-serializers" "*"
