@@ -12,11 +12,18 @@ export function collectRequestMetrics(app: FastifyInstance): void {
     requestHistogram.observe(
       {
         method: request.req.method || 'unknown',
-        path: reply.context.config.url || request.req.url,
+        path: request.req.url
+          ? removeQueryStringFromUrlPath(request.req.url)
+          : 'undefined',
         status_code: reply.res.statusCode,
       },
       reply.getResponseTime() / 1000,
     )
     done()
   })
+}
+
+function removeQueryStringFromUrlPath(url: string): string {
+  const querySeparatorIndex = url.indexOf('?')
+  return querySeparatorIndex > -1 ? url.slice(0, querySeparatorIndex) : url
 }
