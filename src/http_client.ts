@@ -7,11 +7,14 @@ import got, {
   Response as GotResponse,
   NormalizedOptions,
   GeneralError,
+  GotError,
+  HTTPError,
 } from 'got'
 import merge from 'lodash.merge'
 import { Plugin } from './plugin'
 import { FastifyRequest } from 'fastify'
 import { Logger } from './logging/logging.types'
+import { cachedStringHasher } from './utils/cached_string_hasher'
 
 export const httpClientPlugin: Plugin<HttpClientPluginOptions> = fastifyPlugin(
   async (app, opts) => {
@@ -99,37 +102,20 @@ export class HttpClientInstrumentation {
 
   beforeRequest(options: NormalizedOptions): void {
     this.logger.debug(
-      { url: createUrlLog(options.url), method: options.method },
+      { http_client_options: createOptionsLog(options) },
       'HTTP client starts request',
     )
   }
 
   receivedResponse(clientResponse: HttpClientResponse): void {
-    const url = new URL(clientResponse.url)
-    const requestUrl =
-      clientResponse.requestUrl !== clientResponse.url
-        ? new URL(clientResponse.requestUrl)
-        : null
     this.logger.debug(
-      {
-        url: createUrlLog(url),
-        requested_url:
-          requestUrl !== null ? createUrlLog(requestUrl) : undefined,
-        method: clientResponse.request.options.method,
-        status_code: clientResponse.statusCode,
-        status_message: clientResponse.statusMessage,
-        retry_count: clientResponse.retryCount,
-        from_cache: clientResponse.isFromCache,
-        http_version: clientResponse.httpVersion,
-        ip: clientResponse.ip,
-        durations: clientResponse.timings.phases,
-      },
+      { http_client_response: createResponseLog(clientResponse, true) },
       'HTTP client has received response',
     )
     if (typeof clientResponse.timings.phases.total === 'number') {
       HttpClientInstrumentation.requestDurations.observe(
         {
-          host: url.host,
+          host: new URL(clientResponse.url).host,
           status_code: clientResponse.statusCode,
           is_retry: Number(clientResponse.retryCount > 0),
           from_cache:
@@ -141,12 +127,7 @@ export class HttpClientInstrumentation {
       )
     } else {
       this.logger.error(
-        {
-          url: createUrlLog(url),
-          requested_url:
-            requestUrl !== null ? createUrlLog(requestUrl) : undefined,
-          method: clientResponse.request.options.method,
-        },
+        { http_client_response: createResponseLog(clientResponse) },
         'HTTP client request duration metric is missing',
       )
     }
@@ -160,12 +141,10 @@ export class HttpClientInstrumentation {
     const retryLimit = options.retry.limit
     this.logger.debug(
       {
-        url: options.url,
-        method: options.method,
         retry_count: retryCount,
         retry_limit: retryLimit,
-        error_name: error?.name,
-        error_stack: error?.stack,
+        err: error,
+        http_client_options: createOptionsLog(options),
       },
       `HTTP client will retry #${retryCount} of ${retryLimit}`,
     )
@@ -176,26 +155,73 @@ export class HttpClientInstrumentation {
     clientResponse: HttpClientResponse,
   ) {
     this.logger.debug(
-      { url: options.url, method: options.method },
+      { http_client_response: createResponseLog(clientResponse) },
       'HTTP client request will be redirected',
     )
   }
 
   beforeError(error: GeneralError) {
-    this.logger.error(
-      {
-        error_name: error.name,
-        error_stack: error.stack,
-      },
-      `HTTP client error: ${error.message}`,
-    )
+    const log: Record<string, any> = { err: error }
+    if (error instanceof HTTPError) {
+      log.http_client_response = createResponseLog(error.response)
+    } else if (error instanceof GotError) {
+      log.http_client_options = createOptionsLog(error.options)
+    }
+    this.logger.error(log, `HTTP client error: ${error.message}`)
   }
 }
 
-function createUrlLog({ protocol, username, host, pathname, search }: URL) {
+function createOptionsLog({
+  url,
+  method,
+  username,
+  password,
+}: NormalizedOptions) {
+  return {
+    url: createUrlLog(url),
+    method,
+    username,
+    password: password ? cachedStringHasher.hash(password) : undefined,
+  }
+}
+
+function createResponseLog(
+  {
+    url,
+    requestUrl,
+    request,
+    statusCode,
+    statusMessage,
+    retryCount,
+    isFromCache,
+    httpVersion,
+    ip,
+    timings,
+  }: HttpClientResponse,
+  includeDurations = false,
+) {
+  return {
+    url: createUrlLog(new URL(url)),
+    requested_url:
+      requestUrl !== url ? createUrlLog(new URL(requestUrl)) : undefined,
+    method: request.options.method,
+    status_code: statusCode,
+    status_message: statusMessage,
+    retry_count: retryCount,
+    from_cache: isFromCache,
+    http_version: httpVersion,
+    ip,
+    username: request.options.username,
+    password: request.options.password
+      ? cachedStringHasher.hash(request.options.password)
+      : undefined,
+    durations: includeDurations ? timings.phases : undefined,
+  }
+}
+
+function createUrlLog({ protocol, host, pathname, search }: URL) {
   return {
     protocol,
-    username: username || undefined,
     host,
     path: pathname,
     query_params: search,
