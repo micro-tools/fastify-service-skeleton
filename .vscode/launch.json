@@ -31,6 +31,16 @@
       "console": "integratedTerminal",
       "smartStep": true,
       "showAsyncStacks": true
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Run example",
+      "args": ["example/example.ts"],
+      "runtimeArgs": ["-r", "ts-node/register/transpile-only"],
+      "console": "integratedTerminal",
+      "smartStep": true,
+      "showAsyncStacks": true
     }
   ]
 }
