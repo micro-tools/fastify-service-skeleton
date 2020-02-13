@@ -1,7 +1,9 @@
 import { FastifyInstance } from 'fastify'
 import promClient from 'prom-client'
 
-export function collectRequestMetrics(app: FastifyInstance): void {
+export function collectRequestMetrics(
+  app: FastifyInstance,
+): promClient.Histogram {
   const requestHistogram = new promClient.Histogram({
     name: 'http_request_duration_seconds',
     help: 'HTTP server response time in seconds',
@@ -12,15 +14,14 @@ export function collectRequestMetrics(app: FastifyInstance): void {
     requestHistogram.observe(
       {
         method: request.req.method || 'unknown',
-        path: request.req.url
-          ? removeQueryStringFromUrlPath(request.req.url)
-          : 'undefined',
+        path: reply.context.config.url || 'unknown',
         status_code: reply.res.statusCode,
       },
       reply.getResponseTime() / 1000,
     )
     done()
   })
+  return requestHistogram
 }
 
 function removeQueryStringFromUrlPath(url: string): string {
