@@ -7,7 +7,9 @@ export const correlationIdPlugin: Plugin<CorrelationIdOptions> = fastifyPlugin(
     const header = opts.header || 'correlation-id'
     app.decorateRequest('correlationId', '')
     app.addHook('onRequest', (request, reply, done) => {
-      request.correlationId = request.headers[header] || uuidV4()
+      const correlationId = request.headers[header] || uuidV4()
+      request.correlationId = correlationId
+      reply.header('correlation-id', correlationId)
       done()
     })
   },
