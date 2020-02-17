@@ -1,7 +1,11 @@
 import fastify from 'fastify'
 import uuidV4 from 'uuid/v4'
 import nock from 'nock'
-import { httpClientPlugin, HttpClientPluginOptions } from './http_client'
+import {
+  httpClientPlugin,
+  HttpClientPluginOptions,
+  HttpClientInstrumentation,
+} from './http_client'
 import { correlationIdPlugin } from './correlation_id'
 
 describe('httpClient plugin', () => {
@@ -61,4 +65,76 @@ describe('httpClient plugin', () => {
     nock.cleanAll()
     await app.close()
   })
+
+  describe('metrics', () => {
+    it('counts HTTPErrors (triggered when configured and status code is not 2xx)', async () => {
+      const fakeTargetUrl = 'https://testhost'
+      const fakeTargetNock = nock(fakeTargetUrl)
+        .get('/')
+        .reply(500, '{"error": "broken"}')
+      const app = await fastify()
+        .register(correlationIdPlugin) // depends on correlationId
+        .register(httpClientPlugin)
+        .get('/', async (request, reply) => {
+          await request
+            .createHttpClient({ throwHttpErrors: true })
+            .get(fakeTargetUrl)
+          reply.code(200).send()
+        })
+        .ready()
+      const incErrorCounterSpy = jest.spyOn(
+        HttpClientInstrumentation.requestErrors,
+        'inc',
+      )
+      incErrorCounterSpy.mockClear()
+
+      const res = await app.inject({ method: 'GET', url: '/' })
+      expect(res.statusCode).toBe(500)
+      expect(fakeTargetNock.isDone())
+      expect(incErrorCounterSpy).toHaveBeenCalledTimes(1)
+      expect(incErrorCounterSpy.mock.calls[0][0]).toStrictEqual({
+        host: 'testhost',
+        error_name: 'HTTPError',
+        error_code: 'undefined',
+      })
+      await app.close()
+    })
+
+    it('counts request errors (like ENOTFOUND)', async () => {
+      const fakeTargetUrl = 'https://testhost'
+      const fakeTargetNock = nock(fakeTargetUrl)
+        .get('/')
+        .replyWithError({ code: 'ENOTFOUND' })
+      const app = await fastify()
+        .register(correlationIdPlugin) // depends on correlationId
+        .register(httpClientPlugin)
+        .get('/', async (request, reply) => {
+          await request
+            .createHttpClient({ throwHttpErrors: true })
+            .get(fakeTargetUrl)
+          reply.code(200).send()
+        })
+        .ready()
+      const incErrorCounterSpy = jest.spyOn(
+        HttpClientInstrumentation.requestErrors,
+        'inc',
+      )
+      incErrorCounterSpy.mockClear()
+
+      const res = await app.inject({ method: 'GET', url: '/' })
+      expect(res.statusCode).toBe(500)
+      expect(fakeTargetNock.isDone())
+      expect(incErrorCounterSpy).toHaveBeenCalledTimes(1)
+      expect(incErrorCounterSpy.mock.calls[0][0]).toStrictEqual({
+        host: 'testhost',
+        error_name: 'RequestError',
+        error_code: 'ENOTFOUND',
+      })
+      await app.close()
+    })
+  })
 })
+
+interface ErrorWithCode extends Error {
+  code: string
+}

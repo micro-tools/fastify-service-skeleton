@@ -9,6 +9,8 @@ import got, {
   GeneralError,
   GotError,
   HTTPError,
+  ParseError,
+  MaxRedirectsError,
 } from 'got'
 import merge from 'lodash.merge'
 import { Plugin } from './plugin'
@@ -98,6 +100,12 @@ export class HttpClientInstrumentation {
     labelNames: ['host', 'status_code', 'is_retry', 'from_cache'],
   })
 
+  static requestErrors = new promClient.Counter({
+    name: 'http_client_request_errors_total',
+    help: 'HTTP client total request errors.',
+    labelNames: ['host', 'error_name', 'error_code'],
+  })
+
   constructor(private readonly logger: Logger) {}
 
   beforeRequest(options: NormalizedOptions): void {
@@ -162,11 +170,19 @@ export class HttpClientInstrumentation {
 
   beforeError(error: GeneralError) {
     const log: Record<string, any> = { err: error }
-    if (error instanceof HTTPError) {
-      log.http_client_response = createResponseLog(error.response)
-    } else if (error instanceof GotError) {
+    if (error instanceof GotError) {
       log.http_client_options = createOptionsLog(error.options)
+      if ((error as HTTPError | ParseError | MaxRedirectsError).response) {
+        log.http_client_response = createResponseLog(
+          (error as HTTPError | ParseError | MaxRedirectsError).response,
+        )
+      }
     }
+    HttpClientInstrumentation.requestErrors.inc({
+      host: (error as GotError).options.url.host || 'undefined',
+      error_name: error.name,
+      error_code: (error as GotError).code || 'undefined',
+    })
     this.logger.error(log, `HTTP client error: ${error.message}`)
   }
 }
@@ -189,7 +205,6 @@ function createResponseLog(
   {
     url,
     requestUrl,
-    request,
     statusCode,
     statusMessage,
     retryCount,
@@ -201,20 +216,14 @@ function createResponseLog(
   includeDurations = false,
 ) {
   return {
-    url: createUrlLog(new URL(url)),
     requested_url:
       requestUrl !== url ? createUrlLog(new URL(requestUrl)) : undefined,
-    method: request.options.method,
     status_code: statusCode,
     status_message: statusMessage,
     retry_count: retryCount,
     from_cache: isFromCache,
     http_version: httpVersion,
     ip,
-    username: request.options.username,
-    password: request.options.password
-      ? cachedStringHasher.hash(request.options.password)
-      : undefined,
     durations: includeDurations ? timings.phases : undefined,
   }
 }
