@@ -103,7 +103,7 @@ export class HttpClientInstrumentation {
   static requestErrors = new promClient.Counter({
     name: 'http_client_request_errors_total',
     help: 'HTTP client total request errors.',
-    labelNames: ['host', 'error_name', 'error_code'],
+    labelNames: ['host', 'error_name', 'code'],
   })
 
   constructor(private readonly logger: Logger) {}
@@ -181,7 +181,10 @@ export class HttpClientInstrumentation {
     HttpClientInstrumentation.requestErrors.inc({
       host: (error as GotError).options.url.host || 'undefined',
       error_name: error.name,
-      error_code: (error as GotError).code || 'undefined',
+      code:
+        error instanceof HTTPError
+          ? error.response.statusCode
+          : (error as GotError).code || 'undefined',
     })
     this.logger.error(log, `HTTP client error: ${error.message}`)
   }

@@ -95,7 +95,7 @@ describe('httpClient plugin', () => {
       expect(incErrorCounterSpy.mock.calls[0][0]).toStrictEqual({
         host: 'testhost',
         error_name: 'HTTPError',
-        error_code: 'undefined',
+        code: 500,
       })
       await app.close()
     })
@@ -128,7 +128,7 @@ describe('httpClient plugin', () => {
       expect(incErrorCounterSpy.mock.calls[0][0]).toStrictEqual({
         host: 'testhost',
         error_name: 'RequestError',
-        error_code: 'ENOTFOUND',
+        code: 'ENOTFOUND',
       })
       await app.close()
     })
