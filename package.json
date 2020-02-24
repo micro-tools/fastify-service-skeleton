@@ -39,7 +39,7 @@
     "pino-pretty": "^3.5.0",
     "prom-client": "^11.5.3",
     "under-pressure": "^3.2.1",
-    "uuid": "^3.4.0"
+    "uuid": "^7.0.0"
   },
   "devDependencies": {
     "@types/flush-write-stream": "^1.0.0",
