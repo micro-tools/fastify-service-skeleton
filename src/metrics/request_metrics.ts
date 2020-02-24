@@ -1,9 +1,7 @@
 import { FastifyInstance } from 'fastify'
 import promClient from 'prom-client'
 
-export function collectRequestMetrics(
-  app: FastifyInstance,
-): promClient.Histogram {
+export function collectRequestMetrics(app: FastifyInstance) {
   const requestHistogram = new promClient.Histogram({
     name: 'http_request_duration_seconds',
     help: 'HTTP server response time in seconds',
@@ -22,9 +20,4 @@ export function collectRequestMetrics(
     done()
   })
   return requestHistogram
-}
-
-function removeQueryStringFromUrlPath(url: string): string {
-  const querySeparatorIndex = url.indexOf('?')
-  return querySeparatorIndex > -1 ? url.slice(0, querySeparatorIndex) : url
 }
