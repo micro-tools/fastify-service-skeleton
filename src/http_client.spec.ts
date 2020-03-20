@@ -1,5 +1,5 @@
 import fastify from 'fastify'
-import uuidV4 from 'uuid/v4'
+import { v4 as uuidV4 } from 'uuid'
 import nock from 'nock'
 import {
   httpClientPlugin,
