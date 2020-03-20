@@ -17,7 +17,7 @@ export function createRootLogger(
     enabled: isOptionEnabled(opts, true),
     base: opts?.base ? { ...baseDefaults, ...opts.base } : baseDefaults,
     timestamp: epochTimeAndIso8601WithLocalOffset,
-    changeLevelName: 'loglevel',
+    levelKey: 'loglevel',
     useLevelLabels: true,
     customLevels: uppercasePinoLevels,
     ...opts,
