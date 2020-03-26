@@ -26,7 +26,7 @@ describe('Request Logging', () => {
     const request: HTTPInjectOptions = {
       method: 'GET',
       url: '/test',
-      query: { nums: [1, 2] },
+      query: { nums: ['1', '2'] } as any, // TODO: remove type fix
       headers: { 'user-agent': 'Some-Agent/1.0' },
     }
     const responsePromise = app.inject(request)
