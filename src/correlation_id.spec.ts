@@ -5,7 +5,7 @@ describe('Correlation ID', () => {
   it('adds a generated correlationId uuid to the request object if not provided via header', async () => {
     const app = await Fastify()
       .register(correlationIdPlugin)
-      .get('/', function(request, reply) {
+      .get('/', function (request, reply) {
         expect(this.hasRequestDecorator('correlationId'))
         expect(typeof request.correlationId).toBe('string')
         expect(request.correlationId).not.toBe('')
@@ -22,7 +22,7 @@ describe('Correlation ID', () => {
     const correlationId = 'test-correlation-id'
     const app = await Fastify()
       .register(correlationIdPlugin)
-      .get('/', function(request, reply) {
+      .get('/', function (request, reply) {
         expect(this.hasRequestDecorator('correlationId'))
         expect(request.correlationId).toBe(correlationId)
         reply.code(200).send()
@@ -42,7 +42,7 @@ describe('Correlation ID', () => {
     const correlationId = 'test-correlation-id'
     const app = await Fastify()
       .register(correlationIdPlugin)
-      .get('/', function(request, reply) {
+      .get('/', function (request, reply) {
         reply.code(200).send()
       })
       .ready()

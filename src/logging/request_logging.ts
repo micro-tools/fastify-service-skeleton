@@ -27,7 +27,7 @@ export const requestLoggingPlugin: Plugin<RequestLoggingOptions> = fastifyPlugin
 
     // write access logs
     const accessLogger = app.rootLogger.child({ log_type: 'access' })
-    app.addHook('onResponse', function(request, reply, done) {
+    app.addHook('onResponse', function (request, reply, done) {
       const { url, queryString } = separateQueryStringFromUrl(request.raw.url!)
       const logLevel =
         typeof reply.context.config.accessLogLevel === 'string'

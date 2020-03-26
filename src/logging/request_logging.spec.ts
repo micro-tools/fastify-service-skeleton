@@ -32,7 +32,7 @@ describe('Request Logging', () => {
     const responsePromise = app.inject(request)
     const logsPromise = collectLogsUntil(logDestination, responsePromise)
     const [response, logs] = await Promise.all([responsePromise, logsPromise])
-    const accessLogs = logs.filter(log => log.log_type === 'access')
+    const accessLogs = logs.filter((log) => log.log_type === 'access')
 
     expect(response.statusCode).toBe(200)
     expect(accessLogs).toHaveLength(1)
@@ -81,7 +81,7 @@ describe('Request Logging', () => {
     const responsePromise = app.inject({ method: 'GET', url: '/test' })
     const logsPromise = collectLogsUntil(logDestination, responsePromise)
     const [response, logs] = await Promise.all([responsePromise, logsPromise])
-    const accessLogs = logs.filter(log => log.log_type === 'access')
+    const accessLogs = logs.filter((log) => log.log_type === 'access')
 
     expect(response.statusCode).toBe(200)
     expect(accessLogs).toHaveLength(1)

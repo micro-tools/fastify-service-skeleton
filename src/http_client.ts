@@ -63,18 +63,18 @@ function initClientOptions(
     headers: { [correlationIdHeader]: correlationId },
     hooks: {
       beforeRequest: [
-        options => {
+        (options) => {
           instrumentation.beforeRequest(options)
         },
       ],
       afterResponse: [
-        response => {
+        (response) => {
           instrumentation.receivedResponse(response)
           return response
         },
       ],
       beforeError: [
-        error => {
+        (error) => {
           instrumentation.beforeError(error)
           return error
         },

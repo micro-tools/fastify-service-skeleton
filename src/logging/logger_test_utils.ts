@@ -7,7 +7,7 @@ import * as rxOp from 'rxjs/operators'
 
 // helper function copied from pino tests
 export function createDestinationStream(func?: any): stream.Transform {
-  const result = split(data => {
+  const result = split((data) => {
     try {
       return JSON.parse(data)
     } catch (err) {

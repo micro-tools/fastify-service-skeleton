@@ -50,9 +50,7 @@ describe('httpClient plugin', () => {
         reply.code(200).send()
       })
       .ready()
-    const nockScope = nock(fakeTargetUrl)
-      .get('/')
-      .reply(200, '{"ok": true}')
+    const nockScope = nock(fakeTargetUrl).get('/').reply(200, '{"ok": true}')
 
     const res = await app.inject({
       method: 'GET',
