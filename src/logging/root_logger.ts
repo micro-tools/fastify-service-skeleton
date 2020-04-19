@@ -17,9 +17,14 @@ export function createRootLogger(
     enabled: isOptionEnabled(opts, true),
     base: opts?.base ? { ...baseDefaults, ...opts.base } : baseDefaults,
     timestamp: epochTimeAndIso8601WithLocalOffset,
-    levelKey: 'loglevel',
-    useLevelLabels: true,
     customLevels: uppercasePinoLevels,
+    formatters: {
+      level(label, number) {
+        return {
+          loglevel: label,
+        }
+      },
+    },
     ...opts,
   }
   return opts?.destination ? pino(pinoOpts, opts?.destination) : pino(pinoOpts)
