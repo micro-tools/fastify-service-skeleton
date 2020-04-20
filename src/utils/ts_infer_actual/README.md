@@ -9,7 +9,7 @@ interface FinalObj {
 }
 ```
 
-When create a new object like this:
+When we create a new object like this:
 
 ```ts
 const obj: Partial<FinalObj> = { n: 1 }
@@ -17,7 +17,7 @@ const obj: Partial<FinalObj> = { n: 1 }
 
 the variable `obj` would be of type `Partial<FinalObj>`.
 
-Let us assume, however, that we want to infer the actual type structure `{ n: number }`, but still want to constrain it to be a `Partial<FinalObj>`. As TypeScript 3.8 does not provide a out-of-the-box solution for this, this packages provides helper functions that make this possible:
+Let us assume, however, that we want to infer the actual type structure `{ n: number }`, but still want to constrain it to be a `Partial<FinalObj>`. As TypeScript 3.8 does not provide a out-of-the-box solution for this, this package provides helper functions that make this possible:
 
 ```ts
 const inferPartialOfFinalObj = inferActualPartialType<FinalObj>()
