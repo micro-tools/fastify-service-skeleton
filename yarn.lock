@@ -1886,9 +1886,9 @@ human-signals@^1.1.1:
   integrity sha512-SEQu7vl8KjNL2eoGBLF3+wAjpsNfA9XMlXAYj/3EdaNfAlxKthD1xjEQfGOUhllCGGJVNY34bRr6lPINhNjyZw==
 
 hyperid@^2.0.3:
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/hyperid/-/hyperid-2.0.3.tgz#f3729f54d769a8473dda6471156f871827572a52"
-  integrity sha512-DjiKJrHehXuu0nDIY8Enzx5DohjoBuxL1wenzv5pQE6MsSp9tyBg/ziM2lxXXPu8L5DF02dsJgUrEQq1fJHVYQ==
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/hyperid/-/hyperid-2.0.5.tgz#fecedad4e9868d548c096482917c33090bccd2be"
+  integrity sha512-kg0+DOmWo3HSFvWWMCQJJhzEB4kg5z/83l4eFDaeAMJ5E2zbQzTEewAmVtOqdRElU9yRFJhCOuegUk0M6RZfiw==
   dependencies:
     uuid "^3.4.0"
     uuid-parse "^1.1.0"
