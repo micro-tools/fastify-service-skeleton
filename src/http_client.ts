@@ -4,19 +4,23 @@ import * as promClient from 'prom-client'
 import got, {
   Options,
   Got,
-  Response as GotResponse,
-  NormalizedOptions,
-  GeneralError,
-  GotError,
+  RequestError,
   HTTPError,
-  ParseError,
-  MaxRedirectsError,
+  BeforeRequestHook,
+  BeforeRedirectHook,
+  NormalizedOptions,
 } from 'got'
 import merge from 'lodash.merge'
 import { Plugin } from './plugin'
 import { FastifyRequest } from 'fastify'
 import { Logger } from './logging/logging.types'
 import { cachedStringHasher } from './utils/cached_string_hasher'
+
+// In some cases we need the parent/core types of the publicly exported types
+import type {
+  NormalizedOptions as RequestNormalizedOptions,
+  Response as RequestResponse,
+} from 'got/dist/source/core'
 
 export const httpClientPlugin: Plugin<HttpClientPluginOptions> = fastifyPlugin(
   async (app, opts) => {
@@ -108,14 +112,14 @@ export class HttpClientInstrumentation {
 
   constructor(private readonly logger: Logger) {}
 
-  beforeRequest(options: NormalizedOptions): void {
+  beforeRequest(options: Parameters<BeforeRequestHook>[0]): void {
     this.logger.debug(
       { http_client_options: createOptionsLog(options) },
       'HTTP client starts request',
     )
   }
 
-  receivedResponse(clientResponse: HttpClientResponse): void {
+  receivedResponse(clientResponse: RequestResponse): void {
     this.logger.debug(
       { http_client_response: createResponseLog(clientResponse, true) },
       'HTTP client has received response',
@@ -143,7 +147,7 @@ export class HttpClientInstrumentation {
 
   beforeRetry(
     options: NormalizedOptions,
-    error?: GeneralError,
+    error?: RequestError,
     retryCount?: number,
   ): void {
     const retryLimit = options.retry.limit
@@ -159,8 +163,8 @@ export class HttpClientInstrumentation {
   }
 
   beforeRedirect(
-    options: NormalizedOptions,
-    clientResponse: HttpClientResponse,
+    options: Parameters<BeforeRedirectHook>[0],
+    clientResponse: Parameters<BeforeRedirectHook>[1],
   ) {
     this.logger.debug(
       { http_client_response: createResponseLog(clientResponse) },
@@ -168,23 +172,19 @@ export class HttpClientInstrumentation {
     )
   }
 
-  beforeError(error: GeneralError) {
+  beforeError(error: RequestError) {
     const log: Record<string, any> = { err: error }
-    if (error instanceof GotError) {
-      log.http_client_options = createOptionsLog(error.options)
-      if ((error as HTTPError | ParseError | MaxRedirectsError).response) {
-        log.http_client_response = createResponseLog(
-          (error as HTTPError | ParseError | MaxRedirectsError).response,
-        )
-      }
+    log.http_client_options = createOptionsLog(error.options)
+    if (error.response !== undefined) {
+      log.http_client_response = createResponseLog(error.response)
     }
     HttpClientInstrumentation.requestErrors.inc({
-      host: (error as GotError).options.url.host || 'undefined',
+      host: error.options.url.host || 'undefined',
       error_name: error.name,
       code:
         error instanceof HTTPError
           ? error.response.statusCode
-          : (error as GotError).code || 'undefined',
+          : (error as RequestError).code || 'undefined',
     })
     this.logger.error(log, `HTTP client error: ${error.message}`)
   }
@@ -195,7 +195,7 @@ function createOptionsLog({
   method,
   username,
   password,
-}: NormalizedOptions) {
+}: RequestNormalizedOptions) {
   return {
     url: createUrlLog(url),
     method,
@@ -215,7 +215,7 @@ function createResponseLog(
     httpVersion,
     ip,
     timings,
-  }: HttpClientResponse,
+  }: NonNullable<RequestError['response']>,
   includeDurations = false,
 ) {
   return {
@@ -242,7 +242,7 @@ function createUrlLog({ protocol, host, pathname, search }: URL) {
 
 export type HttpClient = Got
 export type HttpClientOptions = Options
-export type HttpClientResponse = GotResponse
+export type HttpClientResponse = Response
 export type HttpClientFactory = (opts?: HttpClientOptions) => HttpClient
 export interface HttpClientPluginOptions extends HttpClientOptions {
   correlationIdHeader?: string

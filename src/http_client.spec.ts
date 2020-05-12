@@ -132,7 +132,3 @@ describe('httpClient plugin', () => {
     })
   })
 })
-
-interface ErrorWithCode extends Error {
-  code: string
-}
