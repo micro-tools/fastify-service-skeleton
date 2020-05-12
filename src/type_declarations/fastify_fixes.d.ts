@@ -7,6 +7,5 @@ declare module 'fastify' {
 
   interface FastifyReply<HttpResponse> {
     log: Logger // log is missing in original declaration
-    statusCode?: number
   }
 }

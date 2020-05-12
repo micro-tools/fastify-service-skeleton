@@ -43,7 +43,7 @@ export const requestLoggingPlugin: Plugin<RequestLoggingOptions> = fastifyPlugin
         request_method: request.raw.method,
         uri: url,
         query_string: queryString,
-        status: reply.statusCode,
+        status: reply.res.statusCode,
         user_agent: request.headers['user-agent'] || '',
       })
       done()
