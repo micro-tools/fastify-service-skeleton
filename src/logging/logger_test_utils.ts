@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+
 import stream from 'stream'
 import { once } from 'events'
 import split from 'split2'
@@ -6,7 +8,9 @@ import * as rx from 'rxjs'
 import * as rxOp from 'rxjs/operators'
 
 // helper function copied from pino tests
-export function createDestinationStream(func?: any): stream.Transform {
+export function createDestinationStream(
+  func?: Parameters<typeof writer.obj>[0],
+): stream.Transform {
   const result = split((data) => {
     try {
       return JSON.parse(data)
@@ -28,7 +32,7 @@ export async function nextLog(
 
 export function collectLogsUntil(
   destinationStream: stream.Transform,
-  stopPromise: Promise<any>,
+  stopPromise: Promise<unknown>,
   consoleLogItems = false,
 ): Promise<LogObj[]> {
   let stream = rx.fromEvent<LogObj>(destinationStream, 'data')
@@ -41,5 +45,5 @@ export function collectLogsUntil(
 }
 
 interface LogObj {
-  [prop: string]: any
+  [prop: string]: unknown
 }

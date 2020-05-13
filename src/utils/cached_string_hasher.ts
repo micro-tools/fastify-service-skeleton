@@ -8,7 +8,7 @@ class CachedStringHasher {
     algorithm = 'sha256',
     encoding: HexBase64Latin1Encoding = 'base64',
   ): Hashed {
-    if (this.memory.hasOwnProperty(str)) {
+    if (Object.prototype.hasOwnProperty.call(this.memory, str)) {
       return this.memory[str]
     }
     const salt = randomBytes(4).toString('hex')

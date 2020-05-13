@@ -38,7 +38,7 @@ export class Validator<T> {
   // static because `asserts` return type did not work with TypeScript 3.7.4
   static assert<T>(
     validator: Validator<T>,
-    candidate: any,
+    candidate: unknown,
     resultHandler?: ValidationResultHandler,
   ): asserts candidate is T {
     if (!validator.validate(candidate, resultHandler)) {

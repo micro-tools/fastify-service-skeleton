@@ -19,7 +19,7 @@ export function createRootLogger(
     timestamp: epochTimeAndIso8601WithLocalOffset,
     customLevels: uppercasePinoLevels,
     formatters: {
-      level(label, number) {
+      level(label, _number) {
         return {
           loglevel: label,
         }

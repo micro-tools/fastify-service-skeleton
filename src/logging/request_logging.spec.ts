@@ -26,7 +26,7 @@ describe('Request Logging', () => {
     const request: HTTPInjectOptions = {
       method: 'GET',
       url: '/test',
-      query: { nums: ['1', '2'] } as any, // TODO: remove type fix
+      query: { nums: ['1', '2'] },
       headers: { 'user-agent': 'Some-Agent/1.0' },
     }
     const responsePromise = app.inject(request)
@@ -39,13 +39,13 @@ describe('Request Logging', () => {
     for (const log of accessLogs) {
       expect(log.loglevel).toBe('INFO')
       expect(log[requestIdLogLabel]).toBeTruthy()
-      expect(isIP(log.remote_address))
+      expect(isIP(log.remote_address as string))
       expect(Number.isInteger(log.response_time))
       expect(log.response_time).toBeGreaterThan(0)
       expect(typeof log['@timestamp']).toBe('string')
-      expect(new Date(log['@timestamp']).getTime()).toBeLessThanOrEqual(
-        Date.now(),
-      )
+      expect(
+        new Date(log['@timestamp'] as string).getTime(),
+      ).toBeLessThanOrEqual(Date.now())
       expect(typeof log['correlation-id']).toBe('string')
       expect(log.request_method).toBe('GET')
       expect(log.uri).toBe('/test')

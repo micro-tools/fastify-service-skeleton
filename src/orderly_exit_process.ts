@@ -1,7 +1,7 @@
 import { Logger } from './logging/logging.types'
 import { createExitListener } from './logging/logging'
 
-export function orderlyExitProcess(logger: Logger) {
+export function orderlyExitProcess(logger: Logger): void {
   process.on(
     'uncaughtException',
     createExitListener(logger, (err, finalLogger) => {

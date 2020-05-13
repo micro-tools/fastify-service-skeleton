@@ -27,7 +27,7 @@ describe('httpClient plugin', () => {
   it('merges all headers and forwards the correlation-id header', async () => {
     const correlationId = uuidV4()
     const fakeTargetUrl = 'https://test'
-    const checkOptionsHook = (opts: HttpClientPluginOptions) => {
+    const checkOptionsHook = (opts: HttpClientPluginOptions): void => {
       expect(opts.headers).toMatchObject({
         'correlation-id': correlationId,
         'plugin-register-header': 'pluginRegister',

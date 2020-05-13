@@ -1,8 +1,8 @@
-import fastify from 'fastify'
+import 'fastify'
 
 declare module 'fastify' {
   interface Logger {
-    [key: string]: any // allow logger to have further unknown properties
+    [key: string]: unknown // allow logger to have further unknown properties
   }
 
   interface FastifyReply<HttpResponse> {

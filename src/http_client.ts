@@ -10,12 +10,13 @@ import {
   BeforeRequestHook,
   BeforeRedirectHook,
   NormalizedOptions,
+  Response,
 } from 'got'
 import merge from 'lodash.merge'
 import { Plugin } from './plugin'
 import { FastifyRequest } from 'fastify'
 import { Logger } from './logging/logging.types'
-import { cachedStringHasher } from './utils/cached_string_hasher'
+import { cachedStringHasher, Hashed } from './utils/cached_string_hasher'
 
 // In some cases we need the parent/core types of the publicly exported types
 import type {
@@ -43,7 +44,7 @@ function createRequestSpecificClientFactory(
   serverRequest: FastifyRequest,
   instrumentation = new HttpClientInstrumentation(serverRequest.log as Logger),
 ): HttpClientFactory {
-  return function createRequestSpecificClient(opts?: HttpClientOptions) {
+  return function createRequestSpecificClient(opts?: HttpClientOptions): Got {
     return got.extend(
       initClientOptions(
         serverRequest.correlationId,
@@ -68,28 +69,28 @@ function initClientOptions(
     headers: { [correlationIdHeader]: correlationId },
     hooks: {
       beforeRequest: [
-        (options) => {
+        (options): void => {
           instrumentation.beforeRequest(options)
         },
       ],
       afterResponse: [
-        (response) => {
+        (response): Response => {
           instrumentation.receivedResponse(response)
           return response
         },
       ],
       beforeError: [
-        (error) => {
+        (error): RequestError => {
           instrumentation.beforeError(error)
           return error
         },
       ],
       beforeRetry: [
-        (options, error, retryCount) =>
+        (options, error, retryCount): void =>
           instrumentation.beforeRetry(options, error, retryCount),
       ],
       beforeRedirect: [
-        (options, response) => {
+        (options, response): void => {
           instrumentation.beforeRedirect(options, response)
         },
       ],
@@ -166,15 +167,15 @@ export class HttpClientInstrumentation {
   beforeRedirect(
     options: Parameters<BeforeRedirectHook>[0],
     clientResponse: Parameters<BeforeRedirectHook>[1],
-  ) {
+  ): void {
     this.logger.debug(
       { http_client_response: createResponseLog(clientResponse) },
       'HTTP client request will be redirected',
     )
   }
 
-  beforeError(error: RequestError) {
-    const log: Record<string, any> = { err: error }
+  beforeError(error: RequestError): void {
+    const log: Record<string, unknown> = { err: error }
     log.http_client_options = createOptionsLog(error.options)
     if (error.response !== undefined) {
       log.http_client_response = createResponseLog(error.response)
@@ -196,7 +197,7 @@ function createOptionsLog({
   method,
   username,
   password,
-}: RequestNormalizedOptions) {
+}: RequestNormalizedOptions): OptionsLog {
   return {
     url: createUrlLog(url),
     method,
@@ -218,7 +219,7 @@ function createResponseLog(
     timings,
   }: NonNullable<RequestError['response']>,
   includeDurations = false,
-) {
+): ResponseLog {
   return {
     requested_url:
       requestUrl !== url ? createUrlLog(new URL(requestUrl)) : undefined,
@@ -231,8 +232,7 @@ function createResponseLog(
     durations: includeDurations ? timings.phases : undefined,
   }
 }
-
-function createUrlLog({ protocol, host, pathname, search }: URL) {
+function createUrlLog({ protocol, host, pathname, search }: URL): UrlLog {
   return {
     protocol,
     host,
@@ -248,6 +248,29 @@ export type HttpClientResponse = import('got').Response
 export type HttpClientFactory = (opts?: HttpClientOptions) => HttpClient
 export interface HttpClientPluginOptions extends HttpClientOptions {
   correlationIdHeader?: string
+}
+
+interface ResponseLog {
+  requested_url: UrlLog | undefined
+  status_code: number
+  status_message: string | undefined
+  retry_count: number
+  from_cache: boolean
+  http_version: string
+  ip: string | undefined
+  durations: Response['timings']['phases'] | undefined
+}
+type OptionsLog = {
+  url: UrlLog
+  method: string
+  username: string | undefined
+  password: Hashed | undefined
+}
+interface UrlLog {
+  protocol: string
+  host: string
+  path: string
+  query_params: string
 }
 
 declare module 'fastify' {

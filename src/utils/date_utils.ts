@@ -1,4 +1,4 @@
-export function iso8601WithLocalOffset(date: Date) {
+export function iso8601WithLocalOffset(date: Date): string {
   const timezoneOffset = -date.getTimezoneOffset()
   const dif = timezoneOffset >= 0 ? '+' : '-'
   return `${date.getFullYear()}-${padNumber(

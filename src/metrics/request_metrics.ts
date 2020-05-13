@@ -1,7 +1,9 @@
 import { FastifyInstance } from 'fastify'
 import promClient from 'prom-client'
 
-export function collectRequestMetrics(app: FastifyInstance) {
+export function collectRequestMetrics(
+  app: FastifyInstance,
+): promClient.Histogram<'status_code' | 'method' | 'path'> {
   const requestHistogram = new promClient.Histogram({
     name: 'http_request_duration_seconds',
     help: 'HTTP server response time in seconds',

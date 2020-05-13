@@ -21,10 +21,10 @@ describe('RootLogger', () => {
     const log = await logPromise
 
     expect(typeof log['@timestamp']).toBe('string')
-    const timestampDiff = Date.now() - Date.parse(log['@timestamp'])
+    const timestampDiff = Date.now() - Date.parse(log['@timestamp'] as string)
     expect(timestampDiff).toBeGreaterThanOrEqual(0)
     expect(timestampDiff).toBeLessThan(10000)
-    const timeDiff = Date.now() - log.time
+    const timeDiff = Date.now() - (log.time as number)
     expect(timeDiff).toBeGreaterThanOrEqual(0)
     expect(timeDiff).toBeLessThan(10000)
     expect(log.loglevel).toBe('INFO')

@@ -66,6 +66,7 @@ function separateQueryStringFromUrl(
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function extractOriginalIp(headers: IncomingHttpHeaders): string | null {
   const header = headers['true-client-ip'] || headers['x-forwarded-for'] || null
   const ips = Array.isArray(header) ? header[0] : header

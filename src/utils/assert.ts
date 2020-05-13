@@ -3,9 +3,9 @@ import { ok, AssertionError } from 'assert'
 export { AssertionError }
 
 export function assert(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   condition: any,
   message?: string | Error | undefined,
-  resultHandler?: (result: boolean) => void,
 ): asserts condition {
   return ok(condition, message)
 }
