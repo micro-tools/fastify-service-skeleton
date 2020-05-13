@@ -8,11 +8,18 @@
     "build": "rm -rf dist && tsc -p tsconfig.build.json",
     "format:check": "prettier --check 'src/**/*.ts'",
     "format:write": "prettier --write 'src/**/*.ts'",
+    "format:staged": "pretty-quick --staged",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r ts-node/register node_modules/.bin/jest --runInBand",
     "prepublishOnly": "npm test && npm run build"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run format:staged",
+      "pre-push": "npm run build && npm run lint && npm test"
+    }
   },
   "repository": {
     "type": "git",
@@ -50,9 +57,11 @@
     "@types/split2": "^2.1.6",
     "@types/uuid": "^7.0.3",
     "flush-write-stream": "^2.0.0",
+    "husky": "^4.2.5",
     "jest": "^26.0.1",
     "nock": "^12.0.3",
     "prettier": "^2.0.5",
+    "pretty-quick": "^2.0.1",
     "rxjs": "^6.5.5",
     "split2": "^3.1.1",
     "strict-event-emitter-types": "^2.0.0",
