@@ -1,4 +1,4 @@
-import Ajv from 'ajv'
+import Ajv from "ajv"
 
 const staticAjvInstance = Ajv()
 
@@ -16,7 +16,7 @@ export class Validator<T> {
 
   validate(
     candidate: unknown,
-    resultHandler?: ValidationResultHandler,
+    resultHandler?: ValidationResultHandler
   ): candidate is T {
     const isValid = this.validateFunc(candidate) as boolean
     if (resultHandler) {
@@ -29,7 +29,7 @@ export class Validator<T> {
           candidate,
           schema: this.schema,
           schemaName: this.schemaName,
-        },
+        }
       )
     }
     return isValid
@@ -39,14 +39,14 @@ export class Validator<T> {
   static assert<T>(
     validator: Validator<T>,
     candidate: unknown,
-    resultHandler?: ValidationResultHandler,
+    resultHandler?: ValidationResultHandler
   ): asserts candidate is T {
     if (!validator.validate(candidate, resultHandler)) {
       throw new ValidationError(
         candidate,
         validator.schemaName,
         validator.schema,
-        validator.validateFunc.errors!,
+        validator.validateFunc.errors!
       )
     }
   }
@@ -57,19 +57,17 @@ export class ValidationError extends Error {
     readonly candidate: unknown,
     readonly schemaName: string,
     readonly schema: object,
-    readonly validationErrors: Ajv.ErrorObject[],
+    readonly validationErrors: Ajv.ErrorObject[]
   ) {
     super(
-      `Invalid ${schemaName}: ${staticAjvInstance.errorsText(
-        validationErrors,
-      )}`,
+      `Invalid ${schemaName}: ${staticAjvInstance.errorsText(validationErrors)}`
     )
   }
 }
 
 export type ValidationResultHandler = (
   error: ValidationError | null,
-  context: ValidationContext,
+  context: ValidationContext
 ) => void
 
 export interface ValidationContext {

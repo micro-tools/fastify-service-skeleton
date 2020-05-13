@@ -1,17 +1,17 @@
-import { createHash, randomBytes, HexBase64Latin1Encoding } from 'crypto'
+import { createHash, randomBytes, HexBase64Latin1Encoding } from "crypto"
 
 class CachedStringHasher {
   private memory: Record<string, Hashed> = {}
 
   hash(
     str: string,
-    algorithm = 'sha256',
-    encoding: HexBase64Latin1Encoding = 'base64',
+    algorithm = "sha256",
+    encoding: HexBase64Latin1Encoding = "base64"
   ): Hashed {
     if (Object.prototype.hasOwnProperty.call(this.memory, str)) {
       return this.memory[str]
     }
-    const salt = randomBytes(4).toString('hex')
+    const salt = randomBytes(4).toString("hex")
     const hashed: Hashed = {
       hash: createHash(algorithm)
         .update(salt + str)

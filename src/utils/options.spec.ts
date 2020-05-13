@@ -1,11 +1,11 @@
 import {
   isOptionEnabledByDefaultTrue,
   isOptionEnabledByDefaultFalse,
-} from './options'
+} from "./options"
 
-describe('options util', () => {
-  describe('isOptionEnabledByDefaultTrue', () => {
-    it('indicates that an option should be enabled unless it is disabled explicitily', () => {
+describe("options util", () => {
+  describe("isOptionEnabledByDefaultTrue", () => {
+    it("indicates that an option should be enabled unless it is disabled explicitily", () => {
       const expectToBeTrue = [
         true,
         { enable: true },
@@ -25,8 +25,8 @@ describe('options util', () => {
     })
   })
 
-  describe('isOptionEnabledByDefaultFalse', () => {
-    it('indicates that an option should be disabled unless it is enabled explicitily', () => {
+  describe("isOptionEnabledByDefaultFalse", () => {
+    it("indicates that an option should be disabled unless it is enabled explicitily", () => {
       const expectToBeTrue = [true, { enable: true }]
       const expectToBeFalse = [
         false,

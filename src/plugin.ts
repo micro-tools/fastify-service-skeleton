@@ -1,5 +1,5 @@
-import http from 'http'
-import fastify from 'fastify'
+import http from "http"
+import fastify from "fastify"
 
 export type Plugin<
   Options,

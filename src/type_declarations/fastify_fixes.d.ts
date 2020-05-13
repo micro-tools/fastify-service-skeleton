@@ -1,6 +1,6 @@
-import 'fastify'
+import "fastify"
 
-declare module 'fastify' {
+declare module "fastify" {
   interface Logger {
     [key: string]: unknown // allow logger to have further unknown properties
   }

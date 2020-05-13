@@ -1,15 +1,15 @@
-import * as os from 'os'
-import pino from 'pino'
-import { Logger, LoggingOptions } from './logging.types'
-import { iso8601WithLocalOffset } from '../utils/date_utils'
-import { isOptionEnabled } from '../utils/options'
+import * as os from "os"
+import pino from "pino"
+import { Logger, LoggingOptions } from "./logging.types"
+import { iso8601WithLocalOffset } from "../utils/date_utils"
+import { isOptionEnabled } from "../utils/options"
 
 export function createRootLogger(
   serviceName: string,
-  opts?: LoggingOptions,
+  opts?: LoggingOptions
 ): RootLogger {
   const baseDefaults = {
-    application_type: 'service',
+    application_type: "service",
     service: serviceName,
     host: os.hostname(),
   }
@@ -31,9 +31,9 @@ export function createRootLogger(
 }
 
 export interface RootLogger {
-  child: Logger['child']
-  level: Logger['level']
-  bindings: Logger['bindings']
+  child: Logger["child"]
+  level: Logger["level"]
+  bindings: Logger["bindings"]
 }
 
 const uppercasePinoLevels = Object.entries(pino.levels.values).reduce<
@@ -46,6 +46,6 @@ const uppercasePinoLevels = Object.entries(pino.levels.values).reduce<
 function epochTimeAndIso8601WithLocalOffset(): string {
   const now = new Date()
   return `,"time":${now.getTime()},"@timestamp":"${iso8601WithLocalOffset(
-    now,
+    now
   )}"`
 }

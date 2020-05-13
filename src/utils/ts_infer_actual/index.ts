@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 
-import type { DeepPartial } from 'utility-types'
-import { identity } from '../identity'
+import type { DeepPartial } from "utility-types"
+import { identity } from "../identity"
 
 export function inferActualType<Basis extends object>(): <Obj extends Basis>(
-  obj: Obj,
+  obj: Obj
 ) => Obj {
   return identity
 }
@@ -12,7 +12,7 @@ export function inferActualType<Basis extends object>(): <Obj extends Basis>(
 export function inferActualPartialType<Basis extends object>(): <
   Obj extends Partial<Basis>
 >(
-  obj: Obj,
+  obj: Obj
 ) => Obj {
   return identity
 }
@@ -20,7 +20,7 @@ export function inferActualPartialType<Basis extends object>(): <
 export function inferActualDeepPartialType<Basis extends object>(): <
   Obj extends DeepPartial<Basis>
 >(
-  obj: Obj,
+  obj: Obj
 ) => Obj {
   return identity
 }

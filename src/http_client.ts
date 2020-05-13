@@ -1,7 +1,7 @@
-import { URL } from 'url'
-import fastifyPlugin from 'fastify-plugin'
-import * as promClient from 'prom-client'
-import got from 'got'
+import { URL } from "url"
+import fastifyPlugin from "fastify-plugin"
+import * as promClient from "prom-client"
+import got from "got"
 import {
   Options,
   Got,
@@ -11,38 +11,38 @@ import {
   BeforeRedirectHook,
   NormalizedOptions,
   Response,
-} from 'got'
-import merge from 'lodash.merge'
-import { Plugin } from './plugin'
-import { FastifyRequest } from 'fastify'
-import { Logger } from './logging/logging.types'
-import { cachedStringHasher, Hashed } from './utils/cached_string_hasher'
+} from "got"
+import merge from "lodash.merge"
+import { Plugin } from "./plugin"
+import { FastifyRequest } from "fastify"
+import { Logger } from "./logging/logging.types"
+import { cachedStringHasher, Hashed } from "./utils/cached_string_hasher"
 
 // In some cases we need the parent/core types of the publicly exported types
 import type {
   NormalizedOptions as RequestNormalizedOptions,
   Response as RequestResponse,
-} from 'got/dist/source/core'
+} from "got/dist/source/core"
 
 export const httpClientPlugin: Plugin<HttpClientPluginOptions> = fastifyPlugin(
   async (app, opts) => {
-    const correlationIdHeader = opts.correlationIdHeader || 'correlation-id'
-    app.decorateRequest('createHttpClient', null, ['correlationId'])
-    app.addHook('onRequest', (request, reply, done) => {
+    const correlationIdHeader = opts.correlationIdHeader || "correlation-id"
+    app.decorateRequest("createHttpClient", null, ["correlationId"])
+    app.addHook("onRequest", (request, reply, done) => {
       request.createHttpClient = createRequestSpecificClientFactory(
         correlationIdHeader,
-        request,
+        request
       )
       done()
     })
   },
-  { decorators: { request: ['correlationId'] } },
+  { decorators: { request: ["correlationId"] } }
 )
 
 function createRequestSpecificClientFactory(
   correlationIdHeader: string,
   serverRequest: FastifyRequest,
-  instrumentation = new HttpClientInstrumentation(serverRequest.log as Logger),
+  instrumentation = new HttpClientInstrumentation(serverRequest.log as Logger)
 ): HttpClientFactory {
   return function createRequestSpecificClient(opts?: HttpClientOptions): Got {
     return got.extend(
@@ -50,8 +50,8 @@ function createRequestSpecificClientFactory(
         serverRequest.correlationId,
         correlationIdHeader,
         instrumentation,
-        opts,
-      ),
+        opts
+      )
     )
   }
 }
@@ -60,7 +60,7 @@ function initClientOptions(
   correlationId: string,
   correlationIdHeader: string,
   instrumentation: HttpClientInstrumentation,
-  options?: HttpClientOptions,
+  options?: HttpClientOptions
 ): HttpClientOptions {
   const defaults: HttpClientOptions = {
     retry: { limit: 0 }, // do not retry by default
@@ -101,15 +101,15 @@ function initClientOptions(
 
 export class HttpClientInstrumentation {
   static requestDurations = new promClient.Histogram({
-    name: 'http_client_total_request_duration_seconds',
-    help: 'HTTP client total request durations.',
-    labelNames: ['host', 'status_code', 'is_retry', 'from_cache'],
+    name: "http_client_total_request_duration_seconds",
+    help: "HTTP client total request durations.",
+    labelNames: ["host", "status_code", "is_retry", "from_cache"],
   })
 
   static requestErrors = new promClient.Counter({
-    name: 'http_client_request_errors_total',
-    help: 'HTTP client total request errors.',
-    labelNames: ['host', 'error_name', 'code'],
+    name: "http_client_request_errors_total",
+    help: "HTTP client total request errors.",
+    labelNames: ["host", "error_name", "code"],
   })
 
   constructor(private readonly logger: Logger) {}
@@ -117,32 +117,32 @@ export class HttpClientInstrumentation {
   beforeRequest(options: Parameters<BeforeRequestHook>[0]): void {
     this.logger.debug(
       { http_client_options: createOptionsLog(options) },
-      'HTTP client starts request',
+      "HTTP client starts request"
     )
   }
 
   receivedResponse(clientResponse: RequestResponse): void {
     this.logger.debug(
       { http_client_response: createResponseLog(clientResponse, true) },
-      'HTTP client has received response',
+      "HTTP client has received response"
     )
-    if (typeof clientResponse.timings.phases.total === 'number') {
+    if (typeof clientResponse.timings.phases.total === "number") {
       HttpClientInstrumentation.requestDurations.observe(
         {
           host: new URL(clientResponse.url).host,
           status_code: clientResponse.statusCode,
           is_retry: Number(clientResponse.retryCount > 0),
           from_cache:
-            typeof clientResponse.isFromCache === 'boolean'
+            typeof clientResponse.isFromCache === "boolean"
               ? Number(clientResponse.isFromCache)
-              : 'unknown',
+              : "unknown",
         },
-        clientResponse.timings.phases.total / 1000,
+        clientResponse.timings.phases.total / 1000
       )
     } else {
       this.logger.error(
         { http_client_response: createResponseLog(clientResponse) },
-        'HTTP client request duration metric is missing',
+        "HTTP client request duration metric is missing"
       )
     }
   }
@@ -150,7 +150,7 @@ export class HttpClientInstrumentation {
   beforeRetry(
     options: NormalizedOptions,
     error?: RequestError,
-    retryCount?: number,
+    retryCount?: number
   ): void {
     const retryLimit = options.retry.limit
     this.logger.debug(
@@ -160,17 +160,17 @@ export class HttpClientInstrumentation {
         err: error,
         http_client_options: createOptionsLog(options),
       },
-      `HTTP client will retry #${retryCount} of ${retryLimit}`,
+      `HTTP client will retry #${retryCount} of ${retryLimit}`
     )
   }
 
   beforeRedirect(
     options: Parameters<BeforeRedirectHook>[0],
-    clientResponse: Parameters<BeforeRedirectHook>[1],
+    clientResponse: Parameters<BeforeRedirectHook>[1]
   ): void {
     this.logger.debug(
       { http_client_response: createResponseLog(clientResponse) },
-      'HTTP client request will be redirected',
+      "HTTP client request will be redirected"
     )
   }
 
@@ -181,12 +181,12 @@ export class HttpClientInstrumentation {
       log.http_client_response = createResponseLog(error.response)
     }
     HttpClientInstrumentation.requestErrors.inc({
-      host: error.options.url.host || 'undefined',
+      host: error.options.url.host || "undefined",
       error_name: error.name,
       code:
         error instanceof HTTPError
           ? error.response.statusCode
-          : (error as RequestError).code || 'undefined',
+          : (error as RequestError).code || "undefined",
     })
     this.logger.error(log, `HTTP client error: ${error.message}`)
   }
@@ -217,8 +217,8 @@ function createResponseLog(
     httpVersion,
     ip,
     timings,
-  }: NonNullable<RequestError['response']>,
-  includeDurations = false,
+  }: NonNullable<RequestError["response"]>,
+  includeDurations = false
 ): ResponseLog {
   return {
     requested_url:
@@ -244,7 +244,7 @@ function createUrlLog({ protocol, host, pathname, search }: URL): UrlLog {
 export type HttpClient = Got
 export type HttpClientOptions = Options
 // Explicit import from got to avoid the usage of `Response` from the DOM lib
-export type HttpClientResponse = import('got').Response
+export type HttpClientResponse = import("got").Response
 export type HttpClientFactory = (opts?: HttpClientOptions) => HttpClient
 export interface HttpClientPluginOptions extends HttpClientOptions {
   correlationIdHeader?: string
@@ -258,7 +258,7 @@ interface ResponseLog {
   from_cache: boolean
   http_version: string
   ip: string | undefined
-  durations: Response['timings']['phases'] | undefined
+  durations: Response["timings"]["phases"] | undefined
 }
 type OptionsLog = {
   url: UrlLog
@@ -273,7 +273,7 @@ interface UrlLog {
   query_params: string
 }
 
-declare module 'fastify' {
+declare module "fastify" {
   interface FastifyRequest {
     createHttpClient: HttpClientFactory
   }

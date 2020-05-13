@@ -1,45 +1,45 @@
-import fastify from 'fastify'
-import merge from 'lodash.merge'
-import fastifySensible from 'fastify-sensible'
-import underPressure from 'under-pressure'
-import hyperid from 'hyperid'
+import fastify from "fastify"
+import merge from "lodash.merge"
+import fastifySensible from "fastify-sensible"
+import underPressure from "under-pressure"
+import hyperid from "hyperid"
 import {
   createLoggers,
   checkLoggingOptionsPlausibility,
-} from './logging/logging'
-import { Logger, LoggingOptions } from './logging/logging.types'
-import { RootLogger } from './logging/root_logger'
-import { orderlyExitProcess } from './orderly_exit_process'
-import { healthCheckPlugin, HealthCheckOptions } from './health_check'
-import { metricsPlugin, MetricsOptions } from './metrics'
-import { httpClientPlugin, HttpClientPluginOptions } from './http_client'
-import { CorrelationIdOptions, correlationIdPlugin } from './correlation_id'
+} from "./logging/logging"
+import { Logger, LoggingOptions } from "./logging/logging.types"
+import { RootLogger } from "./logging/root_logger"
+import { orderlyExitProcess } from "./orderly_exit_process"
+import { healthCheckPlugin, HealthCheckOptions } from "./health_check"
+import { metricsPlugin, MetricsOptions } from "./metrics"
+import { httpClientPlugin, HttpClientPluginOptions } from "./http_client"
+import { CorrelationIdOptions, correlationIdPlugin } from "./correlation_id"
 import {
   RequestLoggingOptions,
   requestLoggingPlugin,
-} from './logging/request_logging'
-import { serviceMetadata } from './service_metadata'
+} from "./logging/request_logging"
+import { serviceMetadata } from "./service_metadata"
 import {
   createIsOptionEnabled,
   isOptionEnabled,
   Enableable,
-} from './utils/options'
+} from "./utils/options"
 
 export function createServiceSkeleton(
-  opts: ServiceSkeletonOptions,
+  opts: ServiceSkeletonOptions
 ): fastify.FastifyInstance {
   const { rootLogger, appLogger } = createLoggers(
     opts.serviceName,
-    opts.logging,
+    opts.logging
   )
   const finalFastifyOpts = adaptFastifyOptions(
     appLogger,
     opts.fastify,
-    opts.logging,
+    opts.logging
   )
   checkLoggingOptionsPlausibility(appLogger, opts, finalFastifyOpts)
   const app = fastify(finalFastifyOpts)
-  app.decorate('rootLogger', rootLogger)
+  app.decorate("rootLogger", rootLogger)
   app.register(serviceMetadata, { serviceName: opts.serviceName })
 
   // Enable all plugins unless explicitly disabled by default,
@@ -77,12 +77,12 @@ export function createServiceSkeleton(
 
 function adaptFastifyOptions(
   appLogger: Logger,
-  fastifyOpts: ServiceSkeletonOptions['fastify'],
-  loggingOpts: ServiceSkeletonOptions['logging'],
+  fastifyOpts: ServiceSkeletonOptions["fastify"],
+  loggingOpts: ServiceSkeletonOptions["logging"]
 ): fastify.ServerOptions {
   const defaults: fastify.ServerOptions = {
     disableRequestLogging: true,
-    requestIdLogLabel: 'request_id',
+    requestIdLogLabel: "request_id",
     genReqId: hyperid({ urlSafe: true }),
   }
   const overrides = {
@@ -93,7 +93,7 @@ function adaptFastifyOptions(
 
 export interface ServiceSkeletonOptions {
   serviceName: string
-  fastify?: Omit<fastify.ServerOptions, 'logger'>
+  fastify?: Omit<fastify.ServerOptions, "logger">
   logging?: Enableable<LoggingOptions>
   enablePluginsByDefault?: boolean
   plugins?: {
@@ -108,7 +108,7 @@ export interface ServiceSkeletonOptions {
   }
 }
 
-declare module 'fastify' {
+declare module "fastify" {
   interface FastifyInstance {
     rootLogger: RootLogger
   }

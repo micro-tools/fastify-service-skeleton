@@ -1,5 +1,5 @@
 export function createIsOptionEnabled(
-  enableByDefault = true,
+  enableByDefault = true
 ): (option: unknown) => boolean {
   return enableByDefault
     ? isOptionEnabledByDefaultTrue
@@ -8,7 +8,7 @@ export function createIsOptionEnabled(
 
 export function isOptionEnabled(
   option: unknown,
-  enableByDefault = true,
+  enableByDefault = true
 ): boolean {
   return enableByDefault
     ? isOptionEnabledByDefaultTrue(option)
@@ -16,7 +16,7 @@ export function isOptionEnabled(
 }
 
 export function isOptionEnabledByDefaultTrue(option: unknown): boolean {
-  if (typeof option === 'object' && option !== null) {
+  if (typeof option === "object" && option !== null) {
     return (option as Enableable<object>).enable !== false
   } else {
     return option !== false
@@ -25,7 +25,7 @@ export function isOptionEnabledByDefaultTrue(option: unknown): boolean {
 
 export function isOptionEnabledByDefaultFalse(option: unknown): boolean {
   return (
-    (typeof option === 'object' &&
+    (typeof option === "object" &&
       option !== null &&
       (option as Enableable<object>).enable === true) ||
     option === true

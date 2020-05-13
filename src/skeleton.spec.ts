@@ -1,13 +1,13 @@
 import {
   createDestinationStream,
   collectLogsUntil,
-} from './logging/logger_test_utils'
-import { createServiceSkeleton } from './skeleton'
+} from "./logging/logger_test_utils"
+import { createServiceSkeleton } from "./skeleton"
 
-describe('serviceSkeleton', () => {
-  const serviceName = 'serviceSkeletonTest'
+describe("serviceSkeleton", () => {
+  const serviceName = "serviceSkeletonTest"
 
-  it('starts with default configs', async () => {
+  it("starts with default configs", async () => {
     const app = await createServiceSkeleton({
       serviceName,
       plugins: {
@@ -17,20 +17,20 @@ describe('serviceSkeleton', () => {
     await app.close()
   })
 
-  it('uses the skeleton logger instead of the default one', async () => {
+  it("uses the skeleton logger instead of the default one", async () => {
     const logDestination = createDestinationStream()
     const app = await createServiceSkeleton({
       serviceName,
       logging: { destination: logDestination },
       enablePluginsByDefault: false,
     })
-      .get('/', (request, reply) => {
-        request.log.info('log from request')
+      .get("/", (request, reply) => {
+        request.log.info("log from request")
         reply.code(200).send()
       })
       .ready()
-    app.log.info('log from app')
-    const responsePromise = app.inject({ method: 'GET', url: '/' })
+    app.log.info("log from app")
+    const responsePromise = app.inject({ method: "GET", url: "/" })
     const logsPromise = collectLogsUntil(logDestination, responsePromise)
     const [response, logs] = await Promise.all([responsePromise, logsPromise])
 

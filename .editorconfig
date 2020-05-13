@@ -11,7 +11,6 @@ indent_style = space
 
 [*.{js,ts}]
 indent_size = 2
-quote_type = single
 
 [*.{json,yml,yaml,md}]
 indent_size = 2

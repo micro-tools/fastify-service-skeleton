@@ -1,15 +1,15 @@
 /* eslint-disable no-console */
 
-import stream from 'stream'
-import { once } from 'events'
-import split from 'split2'
-import writer from 'flush-write-stream'
-import * as rx from 'rxjs'
-import * as rxOp from 'rxjs/operators'
+import stream from "stream"
+import { once } from "events"
+import split from "split2"
+import writer from "flush-write-stream"
+import * as rx from "rxjs"
+import * as rxOp from "rxjs/operators"
 
 // helper function copied from pino tests
 export function createDestinationStream(
-  func?: Parameters<typeof writer.obj>[0],
+  func?: Parameters<typeof writer.obj>[0]
 ): stream.Transform {
   const result = split((data) => {
     try {
@@ -24,18 +24,18 @@ export function createDestinationStream(
 }
 
 export async function nextLog(
-  destinationStream: stream.Transform,
+  destinationStream: stream.Transform
 ): Promise<LogObj> {
-  const [log] = await once(destinationStream, 'data')
+  const [log] = await once(destinationStream, "data")
   return log
 }
 
 export function collectLogsUntil(
   destinationStream: stream.Transform,
   stopPromise: Promise<unknown>,
-  consoleLogItems = false,
+  consoleLogItems = false
 ): Promise<LogObj[]> {
-  let stream = rx.fromEvent<LogObj>(destinationStream, 'data')
+  let stream = rx.fromEvent<LogObj>(destinationStream, "data")
   if (consoleLogItems) {
     stream = stream.pipe(rxOp.tap(console.log))
   }

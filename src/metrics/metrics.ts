@@ -1,8 +1,8 @@
-import promClient from 'prom-client'
-import fastifyPlugin from 'fastify-plugin'
-import { Plugin } from '../plugin'
-import { collectRequestMetrics } from './request_metrics'
-import { isOptionEnabled, Enableable } from '../utils/options'
+import promClient from "prom-client"
+import fastifyPlugin from "fastify-plugin"
+import { Plugin } from "../plugin"
+import { collectRequestMetrics } from "./request_metrics"
+import { isOptionEnabled, Enableable } from "../utils/options"
 
 export const metricsPlugin: Plugin<MetricsOptions> = fastifyPlugin(
   async (app, opts) => {
@@ -14,16 +14,16 @@ export const metricsPlugin: Plugin<MetricsOptions> = fastifyPlugin(
     }
 
     app.route({
-      method: 'GET',
-      url: opts?.url || '/admin/metrics',
-      config: { accessLogLevel: 'DEBUG' },
+      method: "GET",
+      url: opts?.url || "/admin/metrics",
+      config: { accessLogLevel: "DEBUG" },
       handler(request, reply) {
         reply
-          .type('text/plain; version=0.0.4')
+          .type("text/plain; version=0.0.4")
           .send(promClient.register.metrics())
       },
     })
-  },
+  }
 )
 
 export interface MetricsOptions {
