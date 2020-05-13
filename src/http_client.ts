@@ -1,7 +1,8 @@
 import { URL } from 'url'
 import fastifyPlugin from 'fastify-plugin'
 import * as promClient from 'prom-client'
-import got, {
+import got from 'got'
+import {
   Options,
   Got,
   RequestError,
