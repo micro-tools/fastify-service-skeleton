@@ -242,7 +242,8 @@ function createUrlLog({ protocol, host, pathname, search }: URL) {
 
 export type HttpClient = Got
 export type HttpClientOptions = Options
-export type HttpClientResponse = Response
+// Explicit import from got to avoid the usage of `Response` from the DOM lib
+export type HttpClientResponse = import('got').Response
 export type HttpClientFactory = (opts?: HttpClientOptions) => HttpClient
 export interface HttpClientPluginOptions extends HttpClientOptions {
   correlationIdHeader?: string
