@@ -70,7 +70,7 @@
     "rxjs": "^6.5.5",
     "split2": "^3.1.1",
     "strict-event-emitter-types": "^2.0.0",
-    "ts-jest": "^25.5.1",
+    "ts-jest": "^26.0.0",
     "ts-node": "^8.10.1",
     "typescript": "^3.9.2",
     "utility-types": "^3.10.0"
