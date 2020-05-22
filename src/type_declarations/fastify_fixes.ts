@@ -1,4 +1,4 @@
-import "fastify"
+import fastify from "fastify"
 
 declare module "fastify" {
   interface Logger {
@@ -6,6 +6,6 @@ declare module "fastify" {
   }
 
   interface FastifyReply<HttpResponse> {
-    log: Logger // log is missing in original declaration
+    log: fastify.Logger // log is missing in original declaration
   }
 }

@@ -1,5 +1,5 @@
 import Fastify from "fastify"
-import { metricsPlugin } from "./"
+import { metricsPlugin } from "."
 
 describe("Metrics plugin", () => {
   it("exposes metrics via an http endpoint", async () => {
