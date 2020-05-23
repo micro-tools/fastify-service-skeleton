@@ -21,7 +21,7 @@ async function examplePlugin(
       .get("https://postman-echo.com/get", {
         searchParams: {
           ...request.query, // forward query string
-          someNumber: opts?.someNumber || null,
+          someNumber: opts.someNumber ?? null,
         },
         responseType: "json",
       })
