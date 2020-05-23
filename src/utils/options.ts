@@ -17,7 +17,7 @@ export function isOptionEnabled(
 
 export function isOptionEnabledByDefaultTrue(option: unknown): boolean {
   if (typeof option === "object" && option !== null) {
-    return (option as Enableable<object>).enable !== false
+    return (option as Enableable<Record<string, unknown>>).enable !== false
   } else {
     return option !== false
   }
@@ -27,9 +27,10 @@ export function isOptionEnabledByDefaultFalse(option: unknown): boolean {
   return (
     (typeof option === "object" &&
       option !== null &&
-      (option as Enableable<object>).enable === true) ||
+      (option as Enableable<Record<string, unknown>>).enable === true) ||
     option === true
   )
 }
 
-export type Enableable<T extends {}> = T & { enable?: boolean }
+// eslint-disable-next-line @typescript-eslint/ban-types
+export type Enableable<T extends object> = T & { enable?: boolean }

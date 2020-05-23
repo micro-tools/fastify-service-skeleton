@@ -4,10 +4,14 @@ const staticAjvInstance = Ajv()
 
 export class Validator<T> {
   readonly validateFunc: Ajv.ValidateFunction
-  readonly schema: object
+  readonly schema: Record<string, unknown>
   readonly schemaName: string
 
-  constructor(schemaName: string, schema: object, options?: Ajv.Options) {
+  constructor(
+    schemaName: string,
+    schema: Record<string, unknown>,
+    options?: Ajv.Options
+  ) {
     const ajv = options ? new Ajv(options) : staticAjvInstance
     this.validateFunc = ajv.compile(schema)
     this.schema = schema
@@ -56,7 +60,7 @@ export class ValidationError extends Error {
   constructor(
     readonly candidate: unknown,
     readonly schemaName: string,
-    readonly schema: object,
+    readonly schema: Record<string, unknown>,
     readonly validationErrors: Ajv.ErrorObject[]
   ) {
     super(
@@ -72,6 +76,6 @@ export type ValidationResultHandler = (
 
 export interface ValidationContext {
   candidate: unknown
-  schema: object
+  schema: Record<string, unknown>
   schemaName: string
 }

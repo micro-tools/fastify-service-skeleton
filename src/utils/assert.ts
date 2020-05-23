@@ -3,15 +3,14 @@ import { ok, AssertionError } from "assert"
 export { AssertionError }
 
 export function assert(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  condition: any,
+  condition: unknown,
   message?: string | Error | undefined
 ): asserts condition {
   return ok(condition, message)
 }
 
 export function assertIsNotUndefined<T>(
-  value: T,
+  value: T | undefined,
   valueName?: string
 ): asserts value is NotUndefined<T> {
   return assert(
@@ -21,7 +20,7 @@ export function assertIsNotUndefined<T>(
 }
 
 export function assertIsNotNullish<T>(
-  value: T,
+  value: T | null | undefined,
   valueName?: string
 ): asserts value is NotNullish<T> {
   return assert(
@@ -30,8 +29,10 @@ export function assertIsNotNullish<T>(
   )
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 export function assertIsNonEmptyObject<T extends object>(
-  obj: T | {},
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  obj: T | object,
   valueName?: string
 ): asserts obj is T {
   for (const key in obj) {
