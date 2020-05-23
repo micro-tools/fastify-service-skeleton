@@ -1,10 +1,9 @@
 import { IncomingHttpHeaders } from "http"
 import fastifyPlugin from "fastify-plugin"
-import { Plugin } from "../plugin"
 import { iso8601WithLocalOffset } from "../utils/date_utils"
 import { LoggerOptions } from "./logging.types"
 
-export const requestLoggingPlugin: Plugin<RequestLoggingOptions> = fastifyPlugin(
+export const requestLoggingPlugin = fastifyPlugin(
   async function requestLoggingPlugin(
     app,
     opts: Partial<RequestLoggingOptions>

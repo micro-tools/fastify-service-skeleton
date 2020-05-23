@@ -13,7 +13,6 @@ import {
   Response,
 } from "got"
 import merge from "lodash.merge"
-import { Plugin } from "./plugin"
 import { FastifyRequest } from "fastify"
 import { Logger } from "./logging/logging.types"
 import { cachedStringHasher, Hashed } from "./utils/cached_string_hasher"
@@ -24,8 +23,8 @@ import type {
   Response as RequestResponse,
 } from "got/dist/source/core"
 
-export const httpClientPlugin: Plugin<HttpClientPluginOptions> = fastifyPlugin(
-  async (app, opts) => {
+export const httpClientPlugin = fastifyPlugin(
+  async (app, opts: Partial<HttpClientPluginOptions>) => {
     const correlationIdHeader = opts.correlationIdHeader || "correlation-id"
     app.decorateRequest("createHttpClient", null, ["correlationId"])
     app.addHook("onRequest", (request, reply, done) => {
@@ -36,7 +35,11 @@ export const httpClientPlugin: Plugin<HttpClientPluginOptions> = fastifyPlugin(
       done()
     })
   },
-  { decorators: { request: ["correlationId"] } }
+  {
+    name: "http-client",
+    fastify: "2.x",
+    decorators: { request: ["correlationId"] },
+  }
 )
 
 function createRequestSpecificClientFactory(

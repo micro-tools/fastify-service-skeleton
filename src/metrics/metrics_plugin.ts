@@ -8,18 +8,18 @@ import {
 } from "./prometheus_meter_plugin"
 
 export const metricsPlugin = fastifyPlugin(
-  async (app, opts?: MetricsOptions) => {
-    app.register(prometheusMeterPlugin, opts?.prometheusMeter)
-    if (isOptionEnabled(opts?.defaultMetrics)) {
-      promClient.collectDefaultMetrics(opts?.defaultMetrics)
+  async (app, opts: Partial<MetricsOptions>) => {
+    app.register(prometheusMeterPlugin, opts.prometheusMeter)
+    if (isOptionEnabled(opts.defaultMetrics)) {
+      promClient.collectDefaultMetrics(opts.defaultMetrics)
     }
-    if (isOptionEnabled(opts?.requestMetrics)) {
-      app.register(requestMetricsPlugin, opts?.requestMetrics)
+    if (isOptionEnabled(opts.requestMetrics)) {
+      app.register(requestMetricsPlugin, opts.requestMetrics)
     }
 
     app.route({
       method: "GET",
-      url: opts?.endpointPath || "/admin/metrics",
+      url: opts.endpointPath || "/admin/metrics",
       config: { accessLogLevel: "DEBUG" },
       handler(_request, reply) {
         reply

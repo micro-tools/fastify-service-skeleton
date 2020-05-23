@@ -1,4 +1,5 @@
-import { createServiceSkeleton, Plugin } from "../src"
+import { createServiceSkeleton } from "../src"
+import { FastifyInstance } from "fastify"
 
 async function main(): Promise<void> {
   const app = createServiceSkeleton({
@@ -10,7 +11,10 @@ async function main(): Promise<void> {
   await app.listen(3000)
 }
 
-const examplePlugin: Plugin<ExampleOptions> = async (app, opts) => {
+async function examplePlugin(
+  app: FastifyInstance,
+  opts: Partial<ExampleOptions>
+): Promise<void> {
   app.get("/echo", async (request, reply) => {
     const response = await request
       .createHttpClient()

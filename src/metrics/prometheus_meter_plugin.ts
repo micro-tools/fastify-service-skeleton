@@ -3,17 +3,21 @@ import fastifyPlugin from "fastify-plugin"
 import type { PrometheusMeter } from "./prometheus_meter_interface"
 
 export const prometheusMeterPlugin = fastifyPlugin(
-  async (app, opts?: PrometheusMeterOptions) => {
+  async (app, opts: Partial<PrometheusMeterOptions>) => {
     app.decorate(
       "prometheusMeter",
       createPrometheusMeter(
-        opts?.defaultRegisters,
-        opts?.Counter,
-        opts?.Gauge,
-        opts?.Histogram,
-        opts?.Summary
+        opts.defaultRegisters,
+        opts.Counter,
+        opts.Gauge,
+        opts.Histogram,
+        opts.Summary
       )
     )
+  },
+  {
+    name: "prometheus-meter",
+    fastify: "2.x",
   }
 )
 

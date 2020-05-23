@@ -15,7 +15,7 @@ export const requestMetricsPlugin = fastifyPlugin(initRequestMetrics, {
 
 async function initRequestMetrics<ExtraLabel extends string>(
   app: FastifyInstance,
-  opts: RequestMetricsOptions<ExtraLabel>
+  opts: Partial<RequestMetricsOptions<ExtraLabel>>
 ): Promise<void> {
   const extraLabelNames = opts.extraLabelNames || []
   const durationHistogram = app.prometheusMeter.createHistogram({

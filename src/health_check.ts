@@ -1,19 +1,19 @@
-import { Plugin } from "./plugin"
+import { FastifyInstance } from "fastify"
 
-export const healthCheckPlugin: Plugin<HealthCheckOptions> = async (
-  app,
-  opts
-) => {
+export async function healthCheckPlugin(
+  app: FastifyInstance,
+  opts: Partial<HealthCheckOptions>
+): Promise<void> {
   app.route({
     method: "GET",
-    url: opts?.url || "/admin/healthcheck",
+    url: opts.endpointPath || "/admin/healthcheck",
     config: { accessLogLevel: "DEBUG" },
-    handler(request, reply) {
+    handler(_request, reply) {
       reply.code(200).send()
     },
   })
 }
 
 export interface HealthCheckOptions {
-  url?: string
+  endpointPath?: string
 }

@@ -17,7 +17,7 @@ import { CorrelationIdOptions, correlationIdPlugin } from "./correlation_id"
 import {
   RequestLoggingOptions,
   requestLoggingPlugin,
-} from "./logging/request_logging"
+} from "./logging/request_logging_plugin"
 import { serviceMetadata } from "./service_metadata"
 import {
   createIsOptionEnabled,
