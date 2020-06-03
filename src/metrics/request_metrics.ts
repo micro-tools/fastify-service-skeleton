@@ -1,6 +1,8 @@
 import { FastifyInstance } from "fastify"
 import type * as promClient from "prom-client"
 import fastifyPlugin from "fastify-plugin"
+import { PrometheusMeter } from "./prometheus_meter_interface"
+import { throwIfUndefined } from "../utils"
 
 type DefaultLabel = "status_code" | "method" | "path"
 const defaultLabels: DefaultLabel[] = ["status_code", "method", "path"]
@@ -18,7 +20,11 @@ async function initRequestMetrics<ExtraLabel extends string>(
   opts: Partial<RequestMetricsOptions<ExtraLabel>>
 ): Promise<void> {
   const extraLabelNames = opts.extraLabelNames || []
-  const durationHistogram = app.prometheusMeter.createHistogram({
+  const promMeter =
+    opts.prometheusMeter ||
+    throwIfUndefined(app.prometheusMeter, "app.prometheusMeter")
+
+  const durationHistogram = promMeter.createHistogram({
     name: "http_request_duration_seconds",
     help: "HTTP server response time in seconds",
     labelNames: [...defaultLabels, ...extraLabelNames],
@@ -77,6 +83,7 @@ class RequestMetricsRequestDecoration<ExtraLabel extends string> {
 
 export interface RequestMetricsOptions<ExtraLabel extends string = string> {
   extraLabelNames?: ExtraLabel[]
+  prometheusMeter?: PrometheusMeter
 }
 
 declare module "fastify" {

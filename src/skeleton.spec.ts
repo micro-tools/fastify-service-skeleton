@@ -42,4 +42,22 @@ describe("serviceSkeleton", () => {
     }
     await app.close()
   })
+
+  it("can be instantiated multiple times (e.g. for testing)", async () => {
+    const app1 = createServiceSkeleton({
+      serviceName,
+      plugins: {
+        orderlyExitProcess: false, // TODO: does not work when it is enabled
+      },
+    })
+    const app2 = createServiceSkeleton({
+      serviceName,
+      plugins: {
+        orderlyExitProcess: false, // TODO: does not work when it is enabled
+      },
+    })
+    await Promise.all([app1.ready(), app2.ready()]).finally(() =>
+      Promise.all([app1.close(), app2.close()])
+    )
+  })
 })

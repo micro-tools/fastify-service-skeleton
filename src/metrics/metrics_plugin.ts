@@ -9,9 +9,17 @@ import {
 
 export const metricsPlugin = fastifyPlugin(
   async (app, opts: Partial<MetricsOptions>) => {
-    app.register(prometheusMeterPlugin, opts.prometheusMeter)
+    // Use a dedicated local register instead of the global one
+    const register = opts.register || new promClient.Registry()
+
+    app.register(prometheusMeterPlugin, {
+      // Use `register` by default, but may me overriden by specific options
+      defaultRegisters: [register],
+      ...opts.prometheusMeter,
+    })
     if (isOptionEnabled(opts.defaultMetrics)) {
-      promClient.collectDefaultMetrics(opts.defaultMetrics)
+      // Use `register` by default, but may me overriden by specific options
+      promClient.collectDefaultMetrics({ register, ...opts.defaultMetrics })
     }
     if (isOptionEnabled(opts.requestMetrics)) {
       app.register(requestMetricsPlugin, opts.requestMetrics)
@@ -36,6 +44,7 @@ export const metricsPlugin = fastifyPlugin(
 
 export interface MetricsOptions {
   endpointPath?: string
+  register?: promClient.Registry
   prometheusMeter?: PrometheusMeterOptions
   defaultMetrics?: Enableable<promClient.DefaultMetricsCollectorConfiguration>
   requestMetrics?: Enableable<RequestMetricsOptions>

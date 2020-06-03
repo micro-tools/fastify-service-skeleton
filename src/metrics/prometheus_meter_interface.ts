@@ -5,6 +5,7 @@ import type {
   GaugeConfiguration,
   Histogram,
   HistogramConfiguration,
+  Registry,
   Summary,
   SummaryConfiguration,
 } from "prom-client"
@@ -14,6 +15,7 @@ import type {
  * It enables libraries to only depend on this interface instead of a concrete prom-client implementation.
  */
 export interface PrometheusMeter {
+  defaultRegisters: Registry[]
   createCounter<Labels extends string>(
     config: CounterConfiguration<Labels>
   ): Counter<Labels>
