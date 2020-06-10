@@ -1,21 +1,30 @@
 import fastify from "fastify"
 import { v4 as uuidV4 } from "uuid"
 import nock from "nock"
-import {
-  httpClientPlugin,
-  HttpClientPluginOptions,
-  HttpClientInstrumentation,
-} from "./http_client"
-import { correlationIdPlugin } from "./correlation_id"
+import promClient from "prom-client"
+import { httpClientPlugin, HttpClientOptions } from "./http_client"
+import { correlationIdPlugin } from "../correlation_id"
+import { prometheusMeterPlugin } from "../metrics"
 
 describe("httpClient plugin", () => {
+  it("decorates the app with an httpClient", async () => {
+    const app = await fastify()
+      .register(correlationIdPlugin)
+      .register(prometheusMeterPlugin)
+      .register(httpClientPlugin)
+      .ready()
+    expect(typeof app.httpClient).toBe("function")
+    await app.close()
+  })
+
   it("allows to create a request-specific HTTP client", async () => {
     const app = await fastify()
-      .register(correlationIdPlugin) // depends on correlationId
+      .register(correlationIdPlugin)
+      .register(prometheusMeterPlugin)
       .register(httpClientPlugin)
       .get("/", (request, reply) => {
-        expect(typeof request.createHttpClient).toBe("function")
-        expect(typeof request.createHttpClient()).toBe("function")
+        expect(typeof request.httpClient.create).toBe("function")
+        expect(typeof request.httpClient.create()).toBe("function")
         reply.code(200).send()
       })
       .ready()
@@ -27,7 +36,7 @@ describe("httpClient plugin", () => {
   it("merges all headers and forwards the correlation-id header", async () => {
     const correlationId = uuidV4()
     const fakeTargetUrl = "https://test"
-    const checkOptionsHook = (opts: HttpClientPluginOptions): void => {
+    const checkOptionsHook = (opts: HttpClientOptions): void => {
       expect(opts.headers).toMatchObject({
         "correlation-id": correlationId,
         "plugin-register-header": "pluginRegister",
@@ -36,14 +45,17 @@ describe("httpClient plugin", () => {
       })
     }
     const app = await fastify()
-      .register(correlationIdPlugin) // depends on correlationId
+      .register(correlationIdPlugin)
+      .register(prometheusMeterPlugin)
       .register(httpClientPlugin, {
-        headers: { "plugin-register-header": "pluginRegister" },
-        hooks: { beforeRequest: [checkOptionsHook] },
+        defaultOptions: {
+          headers: { "plugin-register-header": "pluginRegister" },
+          hooks: { beforeRequest: [checkOptionsHook] },
+        },
       })
       .get("/", async (request, reply) => {
-        await request
-          .createHttpClient({
+        await request.httpClient
+          .create({
             headers: { "create-client-header": "createClient" },
           })
           .get(fakeTargetUrl, { headers: { "request-header": "request" } })
@@ -70,18 +82,24 @@ describe("httpClient plugin", () => {
       const fakeTargetNock = nock(fakeTargetUrl)
         .get("/")
         .reply(500, '{"error": "broken"}')
+      const prometheusRegistry = new promClient.Registry()
       const app = await fastify()
-        .register(correlationIdPlugin) // depends on correlationId
+        .register(correlationIdPlugin)
+        .register(prometheusMeterPlugin, {
+          defaultRegisters: [prometheusRegistry],
+        })
         .register(httpClientPlugin)
         .get("/", async (request, reply) => {
-          await request
-            .createHttpClient({ throwHttpErrors: true })
+          await request.httpClient
+            .create({ throwHttpErrors: true })
             .get(fakeTargetUrl)
           reply.code(200).send()
         })
         .ready()
       const incErrorCounterSpy = jest.spyOn(
-        HttpClientInstrumentation.requestErrors,
+        prometheusRegistry.getSingleMetric(
+          "http_client_request_errors_total"
+        ) as promClient.Counter<string>,
         "inc"
       )
       incErrorCounterSpy.mockClear()
@@ -103,18 +121,24 @@ describe("httpClient plugin", () => {
       const fakeTargetNock = nock(fakeTargetUrl)
         .get("/")
         .replyWithError({ code: "ENOTFOUND" })
+      const prometheusRegistry = new promClient.Registry()
       const app = await fastify()
-        .register(correlationIdPlugin) // depends on correlationId
+        .register(correlationIdPlugin)
+        .register(prometheusMeterPlugin, {
+          defaultRegisters: [prometheusRegistry],
+        })
         .register(httpClientPlugin)
         .get("/", async (request, reply) => {
-          await request
-            .createHttpClient({ throwHttpErrors: true })
+          await request.httpClient
+            .create({ throwHttpErrors: true })
             .get(fakeTargetUrl)
           reply.code(200).send()
         })
         .ready()
       const incErrorCounterSpy = jest.spyOn(
-        HttpClientInstrumentation.requestErrors,
+        prometheusRegistry.getSingleMetric(
+          "http_client_request_errors_total"
+        ) as promClient.Counter<string>,
         "inc"
       )
       incErrorCounterSpy.mockClear()

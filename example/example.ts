@@ -16,8 +16,8 @@ async function examplePlugin(
   opts: Partial<ExampleOptions>
 ): Promise<void> {
   app.get("/echo", async (request, reply) => {
-    const response = await request
-      .createHttpClient()
+    const response = await request.httpClient
+      .create()
       .get("https://postman-echo.com/get", {
         searchParams: {
           ...request.query, // forward query string
@@ -29,7 +29,7 @@ async function examplePlugin(
   })
 
   app.get("/error", async (request, reply) => {
-    const postmanEchoClient = request.createHttpClient({
+    const postmanEchoClient = request.httpClient.create({
       prefixUrl: "https://postman-echo.com",
       responseType: "json",
     })

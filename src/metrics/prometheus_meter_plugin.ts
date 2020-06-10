@@ -4,11 +4,15 @@ import fastifyPlugin from "fastify-plugin"
 import type { PrometheusMeter } from "./prometheus_meter_interface"
 
 export const prometheusMeterPlugin = fastifyPlugin(
-  async (app, opts: Partial<PrometheusMeterOptions>) => {
+  async function prometheusMeterPlugin(app, opts: PrometheusMeterOptions) {
+    // Use a dedicated local register instead of the global one
+    const defaultRegisters = opts.defaultRegisters || [
+      new promClient.Registry(),
+    ]
     app.decorate(
       "prometheusMeter",
       createPrometheusMeter(
-        opts.defaultRegisters,
+        defaultRegisters,
         opts.Counter,
         opts.Gauge,
         opts.Histogram,
@@ -23,7 +27,7 @@ export const prometheusMeterPlugin = fastifyPlugin(
 )
 
 export function createPrometheusMeter(
-  defaultRegisters: promClient.Registry[] = [promClient.register],
+  defaultRegisters: promClient.Registry[],
   Counter = promClient.Counter,
   Gauge = promClient.Gauge,
   Histogram = promClient.Histogram,
@@ -243,7 +247,7 @@ export type DuplicateStrategy = <
 ) => Metric
 
 export interface PrometheusMeterOptions {
-  defaultRegisters?: promClient.Registry[]
+  defaultRegisters: promClient.Registry[]
   Counter?: typeof promClient.Counter
   Gauge?: typeof promClient.Gauge
   Histogram?: typeof promClient.Histogram

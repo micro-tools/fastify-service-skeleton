@@ -29,3 +29,6 @@ export interface PrometheusMeter {
     config: SummaryConfiguration<Labels>
   ): Summary<Labels>
 }
+
+// Re-export metric types
+export { Counter, Gauge, Histogram, Registry, Summary }
