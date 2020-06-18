@@ -17,7 +17,7 @@ export const requestMetricsPlugin = fastifyPlugin(initRequestMetrics, {
 
 async function initRequestMetrics<ExtraLabel extends string>(
   app: FastifyInstance,
-  opts: Partial<RequestMetricsOptions<ExtraLabel>>
+  opts: RequestMetricsOptions<ExtraLabel>
 ): Promise<void> {
   const extraLabelNames = opts.extraLabelNames || []
   const promMeter =

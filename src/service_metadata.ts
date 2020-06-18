@@ -2,10 +2,7 @@ import fastifyPlugin from "fastify-plugin"
 import { assertIsNonEmptyObject } from "./utils/assert"
 
 export const serviceMetadata = fastifyPlugin(
-  async function serviceMetadataPlugin(
-    app,
-    opts: Partial<ServiceMetadataOptions>
-  ) {
+  async function serviceMetadataPlugin(app, opts: ServiceMetadataOptions) {
     assertIsNonEmptyObject<ServiceMetadataOptions>(opts)
     app.decorate("serviceName", opts.serviceName)
   },

@@ -2,7 +2,7 @@ import { v4 as uuidV4 } from "uuid"
 import fastifyPlugin from "fastify-plugin"
 
 export const correlationIdPlugin = fastifyPlugin(
-  async function correlationIdPlugin(app, opts: Partial<CorrelationIdOptions>) {
+  async function correlationIdPlugin(app, opts: CorrelationIdOptions) {
     const header = opts.header || "correlation-id"
     app.decorateRequest("correlationId", "")
     app.addHook("onRequest", (request, reply, done) => {

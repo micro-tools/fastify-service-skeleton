@@ -13,7 +13,7 @@ async function main(): Promise<void> {
 
 async function examplePlugin(
   app: FastifyInstance,
-  opts: Partial<ExampleOptions>
+  opts: ExampleOptions
 ): Promise<void> {
   app.get("/echo", async (request, reply) => {
     const response = await request.httpClient

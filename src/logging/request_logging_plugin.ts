@@ -4,10 +4,7 @@ import { iso8601WithLocalOffset } from "../utils/date_utils"
 import { LoggerOptions } from "./logging.types"
 
 export const requestLoggingPlugin = fastifyPlugin(
-  async function requestLoggingPlugin(
-    app,
-    opts: Partial<RequestLoggingOptions>
-  ) {
+  async function requestLoggingPlugin(app, opts: RequestLoggingOptions) {
     const requestIdLogLabel = opts.requestIdLogLabel || "request_id"
 
     app.decorateRequest("receivedAt", null)

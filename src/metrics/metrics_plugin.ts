@@ -8,7 +8,7 @@ import {
 } from "./prometheus_meter_plugin"
 
 export const metricsPlugin = fastifyPlugin(
-  async (app, opts: Partial<MetricsOptions>) => {
+  async (app, opts: MetricsOptions) => {
     // Use a dedicated local register instead of the global one
     const register = opts.register || new promClient.Registry()
 

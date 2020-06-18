@@ -2,7 +2,7 @@ import { FastifyInstance } from "fastify"
 
 export async function healthCheckPlugin(
   app: FastifyInstance,
-  opts: Partial<HealthCheckOptions>
+  opts: HealthCheckOptions
 ): Promise<void> {
   app.route({
     method: "GET",
