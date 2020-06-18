@@ -1,7 +1,7 @@
 import { FastifyInstance } from "fastify"
 import type * as promClient from "prom-client"
 import fastifyPlugin from "fastify-plugin"
-import { PrometheusMeter } from "./prometheus_meter_interface"
+import { PrometheusMeter } from "./prometheus_meter"
 import { throwIfUndefined } from "../utils"
 
 type DefaultLabel = "status_code" | "method" | "path"

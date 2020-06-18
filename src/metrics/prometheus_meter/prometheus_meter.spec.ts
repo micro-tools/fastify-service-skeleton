@@ -1,12 +1,11 @@
 import { Registry, Metric } from "prom-client"
-
+import { PrometheusMeter } from "./prometheus_meter_interface"
 import {
   createPrometheusMeter,
   duplicateStrategies,
   MetricConfiguration,
   DuplicateStrategy,
-} from "./prometheus_meter_plugin"
-import { PrometheusMeter } from "./prometheus_meter_interface"
+} from "./prometheus_meter_factory"
 
 test("Multiple metric instantiations with the same config throw an error by default (promClient default)", async () => {
   const promMeter = createPrometheusMeter([new Registry()])

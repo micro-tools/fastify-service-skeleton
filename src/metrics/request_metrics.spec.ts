@@ -2,7 +2,7 @@ import fastify from "fastify"
 import { Registry } from "prom-client"
 
 import { requestMetricsPlugin } from "./request_metrics"
-import { prometheusMeterPlugin } from "./prometheus_meter_plugin"
+import { prometheusMeterPlugin } from "./prometheus_meter"
 
 describe("Request metrics", () => {
   it("observes request durations", async () => {

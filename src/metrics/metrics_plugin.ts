@@ -5,7 +5,7 @@ import { isOptionEnabled, Enableable } from "../utils/options"
 import {
   prometheusMeterPlugin,
   PrometheusMeterOptions,
-} from "./prometheus_meter_plugin"
+} from "./prometheus_meter"
 
 export const metricsPlugin = fastifyPlugin(
   async (app, opts: MetricsOptions) => {
@@ -30,9 +30,7 @@ export const metricsPlugin = fastifyPlugin(
       url: opts.endpointPath || "/admin/metrics",
       config: { accessLogLevel: "DEBUG" },
       handler(_request, reply) {
-        reply
-          .type("text/plain; version=0.0.4")
-          .send(promClient.register.metrics())
+        reply.type("text/plain; version=0.0.4").send(register.metrics())
       },
     })
   },
