@@ -9,7 +9,7 @@ describe("Request Logging", () => {
   it("writes access logs with required fields on response", async () => {
     const logDestination = createDestinationStream()
     const requestIdLogLabel = "test_req_id"
-    const app = await createServiceSkeleton({
+    const app = createServiceSkeleton({
       serviceName,
       fastify: { requestIdLogLabel },
       enablePluginsByDefault: false,
@@ -18,11 +18,10 @@ describe("Request Logging", () => {
         correlationId: { enable: true },
         requestLogging: { enable: true },
       },
+    }).get("/test", (request, reply) => {
+      reply.code(200).send()
     })
-      .get("/test", (request, reply) => {
-        reply.code(200).send()
-      })
-      .ready()
+    await app.ready()
     const request: HTTPInjectOptions = {
       method: "GET",
       url: "/test",
@@ -62,7 +61,7 @@ describe("Request Logging", () => {
   test("the access logs' logLevel can be modified via route config", async () => {
     const accessLogLevel = "DEBUG"
     const logDestination = createDestinationStream()
-    const app = await createServiceSkeleton({
+    const app = createServiceSkeleton({
       serviceName,
       enablePluginsByDefault: false,
       logging: { destination: logDestination, level: accessLogLevel },
@@ -70,14 +69,13 @@ describe("Request Logging", () => {
         correlationId: { enable: true },
         requestLogging: { enable: true },
       },
+    }).get("/test", {
+      config: { accessLogLevel },
+      handler(request, reply) {
+        reply.code(200).send()
+      },
     })
-      .get("/test", {
-        config: { accessLogLevel },
-        handler(request, reply) {
-          reply.code(200).send()
-        },
-      })
-      .ready()
+    await app.ready()
     const responsePromise = app.inject({ method: "GET", url: "/test" })
     const logsPromise = collectLogsUntil(logDestination, responsePromise)
     const [response, logs] = await Promise.all([responsePromise, logsPromise])
@@ -91,7 +89,7 @@ describe("Request Logging", () => {
 
   it("adds request and correlation ids to logs created in the context of a request", async () => {
     const logDestination = createDestinationStream()
-    const app = await createServiceSkeleton({
+    const app = createServiceSkeleton({
       serviceName,
       enablePluginsByDefault: false,
       logging: { destination: logDestination },
@@ -99,13 +97,12 @@ describe("Request Logging", () => {
         correlationId: { enable: true },
         requestLogging: { enable: true },
       },
+    }).get("/", (request, reply) => {
+      request.log.info("in the context of a request #1")
+      reply.log.info("in the context of a request #2")
+      reply.code(200).send()
     })
-      .get("/", (request, reply) => {
-        request.log.info("in the context of a request #1")
-        reply.log.info("in the context of a request #2")
-        reply.code(200).send()
-      })
-      .ready()
+    await app.ready()
     const responsePromise = app.inject({ method: "GET", url: "/" })
     const logsPromise = collectLogsUntil(logDestination, responsePromise)
     const [response, logs] = await Promise.all([responsePromise, logsPromise])

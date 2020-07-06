@@ -6,13 +6,13 @@ import { prometheusMeterPlugin } from "./prometheus_meter"
 
 describe("Request metrics", () => {
   it("observes request durations", async () => {
-    const app = await fastify()
+    const app = fastify()
       .register(prometheusMeterPlugin, { defaultRegisters: [new Registry()] })
       .register(requestMetricsPlugin)
       .get("/test/:someParam", (request, reply) => {
         reply.send({ ok: "ok" })
       })
-      .ready()
+    await app.ready()
     const observeSpy = jest.spyOn(
       app.requestMetrics.durationHistogram,
       "observe"
@@ -40,7 +40,7 @@ describe("Request metrics", () => {
   })
 
   it("allows to add extra labels", async () => {
-    const app = await fastify()
+    const app = fastify()
       .register(prometheusMeterPlugin, { defaultRegisters: [new Registry()] })
       .register(requestMetricsPlugin, {
         extraLabelNames: ["test_param", "optional_extra"],
@@ -49,7 +49,7 @@ describe("Request metrics", () => {
         request.requestMetrics.addLabel("test_param", request.params.testParam)
         reply.send({ ok: "ok" })
       })
-      .ready()
+    await app.ready()
     const observeSpy = jest.spyOn(
       app.requestMetrics.durationHistogram,
       "observe"

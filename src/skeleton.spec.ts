@@ -8,27 +8,27 @@ describe("serviceSkeleton", () => {
   const serviceName = "serviceSkeletonTest"
 
   it("starts with default configs", async () => {
-    const app = await createServiceSkeleton({
+    const app = createServiceSkeleton({
       serviceName,
       plugins: {
         orderlyExitProcess: false, // TODO: does not work when it is enabled
       },
-    }).ready()
+    })
+    await app.ready()
     await app.close()
   })
 
   it("uses the skeleton logger instead of the default one", async () => {
     const logDestination = createDestinationStream()
-    const app = await createServiceSkeleton({
+    const app = createServiceSkeleton({
       serviceName,
       logging: { destination: logDestination },
       enablePluginsByDefault: false,
+    }).get("/", (request, reply) => {
+      request.log.info("log from request")
+      reply.code(200).send()
     })
-      .get("/", (request, reply) => {
-        request.log.info("log from request")
-        reply.code(200).send()
-      })
-      .ready()
+    await app.ready()
     app.log.info("log from app")
     const responsePromise = app.inject({ method: "GET", url: "/" })
     const logsPromise = collectLogsUntil(logDestination, responsePromise)

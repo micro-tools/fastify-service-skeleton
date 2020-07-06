@@ -3,7 +3,7 @@ import { correlationIdPlugin } from "./correlation_id"
 
 describe("Correlation ID", () => {
   it("adds a generated correlationId uuid to the request object if not provided via header", async () => {
-    const app = await Fastify()
+    const app = Fastify()
       .register(correlationIdPlugin)
       .get("/", function (request, reply) {
         expect(this.hasRequestDecorator("correlationId"))
@@ -11,7 +11,7 @@ describe("Correlation ID", () => {
         expect(request.correlationId).not.toBe("")
         reply.code(200).send()
       })
-      .ready()
+    await app.ready()
     const { statusCode } = await app.inject({ method: "GET", url: "/" })
 
     expect(statusCode).toBe(200)
@@ -20,14 +20,14 @@ describe("Correlation ID", () => {
 
   it("adds the correlationId from the corresponding header to the request object", async () => {
     const correlationId = "test-correlation-id"
-    const app = await Fastify()
+    const app = Fastify()
       .register(correlationIdPlugin)
       .get("/", function (request, reply) {
         expect(this.hasRequestDecorator("correlationId"))
         expect(request.correlationId).toBe(correlationId)
         reply.code(200).send()
       })
-      .ready()
+    await app.ready()
     const { statusCode } = await app.inject({
       method: "GET",
       url: "/",
@@ -40,12 +40,12 @@ describe("Correlation ID", () => {
 
   it("adds the correlationId response header", async () => {
     const correlationId = "test-correlation-id"
-    const app = await Fastify()
+    const app = Fastify()
       .register(correlationIdPlugin)
       .get("/", function (request, reply) {
         reply.code(200).send()
       })
-      .ready()
+    await app.ready()
     const response = await app.inject({
       method: "GET",
       url: "/",
