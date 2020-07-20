@@ -3646,13 +3646,13 @@ picomatch@^2.0.4, picomatch@^2.0.5:
   integrity sha512-q0M/9eZHzmr0AulXyPwNfZjtwZ/RBZlbN3K3CErVrk50T2ASYI7Bye0EvekFY3IP1Nt2DHu0re+V2ZHIpMkuWg==
 
 pino-pretty@^4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/pino-pretty/-/pino-pretty-4.0.0.tgz#afbff81f946342b9d6eabc434942fe490e02faa9"
-  integrity sha512-YLy/n3dMXYWOodSm530gelkSAJGmEp29L9pqiycInlIae5FEJPWAkMRO3JFMbIFtjD2Ve4SH2aBcz2aRreGpBQ==
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/pino-pretty/-/pino-pretty-4.1.0.tgz#ad47ae00d4f3959cfadcdd691b1ebdcbdd61e42e"
+  integrity sha512-D4rORz/7SCZ0AGeWw9QFXsJ+ky3jDOqi/ABFzxxCk5BtEelEgJ6AABFew7TosHGw7I1t8VuMaGdTVNoYMZc+jg==
   dependencies:
     "@hapi/bourne" "^2.0.0"
     args "^5.0.1"
-    chalk "^3.0.0"
+    chalk "^4.0.0"
     dateformat "^3.0.3"
     fast-safe-stringify "^2.0.7"
     jmespath "^0.15.0"
@@ -3660,7 +3660,7 @@ pino-pretty@^4.0.0:
     pump "^3.0.0"
     readable-stream "^3.6.0"
     split2 "^3.1.1"
-    strip-json-comments "^3.0.1"
+    strip-json-comments "^3.1.1"
 
 pino-std-serializers@^2.4.2:
   version "2.4.2"
@@ -4451,10 +4451,10 @@ strip-final-newline@^2.0.0:
   resolved "https://registry.yarnpkg.com/strip-final-newline/-/strip-final-newline-2.0.0.tgz#89b852fb2fcbe936f6f4b3187afb0a12c1ab58ad"
   integrity sha512-BrpvfNAE3dcvq7ll3xVumzjKjZQ5tI1sEUIKr3Uoks0XUl45St3FlatVqef9prk4jRDzhW6WZg+3bk93y6pLjA==
 
-strip-json-comments@^3.0.1, strip-json-comments@^3.1.0:
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/strip-json-comments/-/strip-json-comments-3.1.0.tgz#7638d31422129ecf4457440009fba03f9f9ac180"
-  integrity sha512-e6/d0eBu7gHtdCqFt0xJr642LdToM5/cN4Qb9DbHjVx1CP5RyeM+zH7pbecEmDv/lBqb0QH+6Uqq75rxFPkM0w==
+strip-json-comments@^3.1.0, strip-json-comments@^3.1.1:
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/strip-json-comments/-/strip-json-comments-3.1.1.tgz#31f1281b3832630434831c310c01cccda8cbe006"
+  integrity sha512-6fPc+R4ihwqP6N/aIv2f1gMH8lOVtWQHoqC4yK6oSDVVocumAsfCqjkXnqiYMhmMwS/mEHLp7Vehlt3ql6lEig==
 
 supports-color@^5.3.0:
   version "5.5.0"
