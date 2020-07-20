@@ -1884,12 +1884,24 @@ fast-safe-stringify@^2.0.7:
   resolved "https://registry.yarnpkg.com/fast-safe-stringify/-/fast-safe-stringify-2.0.7.tgz#124aa885899261f68aedb42a7c080de9da608743"
   integrity sha512-Utm6CdzT+6xsDk2m8S6uL8VHxNwI6Jub+e9NYTcAms28T84pTa25GJQV9j0CY0N1rM8hK4x6grpF2BQf+2qwVA==
 
-fastify-plugin@^1.5.0, fastify-plugin@^1.6.0, fastify-plugin@^1.6.1:
+fastify-error@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/fastify-error/-/fastify-error-0.1.0.tgz#7ca9d3708a2b1a74aefed0e5dde1b96d0390f718"
+  integrity sha512-jyCEc3VPEc8/PUwzDQAM2JlXLK2BG6L19mMJzbGij0TfdY1sHF9pCnnAn6Vcoi84TMTBOJynNDQUMUz6cjRmBw==
+
+fastify-plugin@^1.5.0, fastify-plugin@^1.6.0:
   version "1.6.1"
   resolved "https://registry.yarnpkg.com/fastify-plugin/-/fastify-plugin-1.6.1.tgz#122f5a5eeb630d55c301713145a9d188e6d5dd5b"
   integrity sha512-APBcb27s+MjaBIerFirYmBLatoPCgmHZM6XP0K+nDL9k0yX8NJPWDY1RAC3bh6z+AB5ULS2j31BUfLMT3uaZ4A==
   dependencies:
     semver "^6.3.0"
+
+fastify-plugin@^2.0.0:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/fastify-plugin/-/fastify-plugin-2.0.1.tgz#e9f586bff057cd947175a580273aefdf7bdc62b8"
+  integrity sha512-spYlahs74ZHR/s+cPXukJLwx0B6khgnX05i2rZW5lc9dqoMI0txrNA9mGruulkerqd4FduzkZMTQJywSwkiVOw==
+  dependencies:
+    semver "^7.3.2"
 
 fastify-sensible@^2.1.1:
   version "2.1.1"
@@ -4708,12 +4720,13 @@ typescript@^3.9.6:
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.9.6.tgz#8f3e0198a34c3ae17091b35571d3afd31999365a"
   integrity sha512-Pspx3oKAPJtjNwE92YS05HQoY7z2SFyOpHo9MqJor3BXAGNaPUs83CuVp9VISFkSjyRfiTpmKuAYGJB7S7hOxw==
 
-under-pressure@^4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/under-pressure/-/under-pressure-4.0.0.tgz#514feea43d8f1a8ae7030a28517509abcf4d4862"
-  integrity sha512-YHylRX3dNBb3zdGDbeIRWYPSxLHyWyQGzvAmHrvUNH0vPXA9jGpb8VvcTmNccw1wLC4sgLVCavw+1N+hF9yvnw==
+under-pressure@^5.1.0:
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/under-pressure/-/under-pressure-5.1.0.tgz#3553570bcf93f34c57ad002e4279bb0de30c427b"
+  integrity sha512-jNQ5auXbBL/b0tQJsXJ4gU+e5459DcukSHMeF/d3LGZBjh7Fi1L2uFgvkXZV63AfUJhkbQtxA0kipL7FfGtKrg==
   dependencies:
-    fastify-plugin "^1.6.1"
+    fastify-error "^0.1.0"
+    fastify-plugin "^2.0.0"
 
 union-value@^1.0.0:
   version "1.0.1"
