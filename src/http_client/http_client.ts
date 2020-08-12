@@ -11,7 +11,7 @@ import {
 
 export const httpClientPlugin = fastifyPlugin(initHttpClient, {
   name: "http-client",
-  fastify: "2.x",
+  fastify: "3.x",
   decorators: { request: ["correlationId"] },
 })
 

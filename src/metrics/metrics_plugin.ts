@@ -36,7 +36,7 @@ export const metricsPlugin = fastifyPlugin(
   },
   {
     name: "metrics",
-    fastify: "2.x",
+    fastify: "3.x",
   }
 )
 

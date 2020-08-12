@@ -1,4 +1,5 @@
-import fastify from "fastify"
+import http from "http"
+import fastify, { FastifyInstance, FastifyServerOptions } from "fastify"
 import merge from "lodash.merge"
 import fastifySensible from "fastify-sensible"
 import underPressure from "under-pressure"
@@ -27,7 +28,7 @@ import {
 
 export function createServiceSkeleton(
   opts: ServiceSkeletonOptions
-): fastify.FastifyInstance {
+): FastifyInstance<http.Server> {
   const { rootLogger, appLogger } = createLoggers(
     opts.serviceName,
     opts.logging
@@ -38,7 +39,7 @@ export function createServiceSkeleton(
     opts.logging
   )
   checkLoggingOptionsPlausibility(appLogger, opts, finalFastifyOpts)
-  const app = fastify(finalFastifyOpts)
+  const app = fastify<http.Server>(finalFastifyOpts)
   app.decorate("rootLogger", rootLogger)
   app.register(serviceMetadata, { serviceName: opts.serviceName })
 
@@ -79,8 +80,8 @@ function adaptFastifyOptions(
   appLogger: Logger,
   fastifyOpts: ServiceSkeletonOptions["fastify"],
   loggingOpts: ServiceSkeletonOptions["logging"]
-): fastify.ServerOptions {
-  const defaults: fastify.ServerOptions = {
+): FastifyServerOptions {
+  const defaults: FastifyServerOptions = {
     disableRequestLogging: true,
     requestIdLogLabel: "request_id",
     genReqId: hyperid({ urlSafe: true }),
@@ -93,7 +94,7 @@ function adaptFastifyOptions(
 
 export interface ServiceSkeletonOptions {
   serviceName: string
-  fastify?: Omit<fastify.ServerOptions, "logger">
+  fastify?: Omit<FastifyServerOptions, "logger">
   logging?: Enableable<LoggingOptions>
   enablePluginsByDefault?: boolean
   plugins?: {

@@ -1,8 +1,8 @@
 import pino from "pino"
+import { FastifyServerOptions } from "fastify"
 import { ServiceSkeletonOptions } from "../skeleton"
 import { createRootLogger, RootLogger } from "./root_logger"
 import { Logger } from "./logging.types"
-import fastify from "fastify"
 import { isOptionEnabled } from "../utils/options"
 
 export function createLoggers(
@@ -17,10 +17,10 @@ export function createLoggers(
 export function checkLoggingOptionsPlausibility(
   appLogger: Logger,
   opts: ServiceSkeletonOptions,
-  finalFastifyOpts: fastify.ServerOptions
+  finalFastifyOpts: FastifyServerOptions
 ): void {
   if (
-    (opts.fastify as fastify.ServerOptions | undefined)?.logger !== undefined
+    (opts.fastify as FastifyServerOptions | undefined)?.logger !== undefined
   ) {
     appLogger.warn(
       "You have provided fastify.logger options, but they will be ignored. Use the skeleton's logger options instead."

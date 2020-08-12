@@ -22,7 +22,7 @@ export const prometheusMeterPlugin = fastifyPlugin(
   },
   {
     name: "prometheus-meter",
-    fastify: "2.x",
+    fastify: "3.x",
   }
 )
 

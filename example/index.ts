@@ -15,18 +15,21 @@ async function examplePlugin(
   app: FastifyInstance,
   opts: ExampleOptions
 ): Promise<void> {
-  app.get("/echo", async (request, reply) => {
-    const response = await request.httpClient
-      .create()
-      .get("https://postman-echo.com/get", {
-        searchParams: {
-          ...request.query, // forward query string
-          someNumber: opts.someNumber ?? null,
-        },
-        responseType: "json",
-      })
-    reply.send(response.body)
-  })
+  app.get<{ Querystring: Record<string, unknown> }>(
+    "/echo",
+    async (request, reply) => {
+      const response = await request.httpClient
+        .create()
+        .get("https://postman-echo.com/get", {
+          searchParams: {
+            ...request.query, // forward query string
+            someNumber: opts.someNumber ?? null,
+          },
+          responseType: "json",
+        })
+      reply.send(response.body)
+    }
+  )
 
   app.get("/error", async (request, reply) => {
     const postmanEchoClient = request.httpClient.create({

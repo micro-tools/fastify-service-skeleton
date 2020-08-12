@@ -2,6 +2,7 @@ import { IncomingHttpHeaders } from "http"
 import fastifyPlugin from "fastify-plugin"
 import { iso8601WithLocalOffset } from "../utils/date_utils"
 import { LoggerOptions } from "./logging.types"
+import { RouteGenericInterface } from "fastify/types/route"
 
 export const requestLoggingPlugin = fastifyPlugin(
   async function requestLoggingPlugin(app, opts: RequestLoggingOptions) {
@@ -14,7 +15,7 @@ export const requestLoggingPlugin = fastifyPlugin(
       // override request and reply logger with a request specific one if it has a child method
       // assert(request.log === reply.log)
       if (typeof request.log.child === "function") {
-        request.log = reply.log = (request.log as import("pino").Logger).child({
+        request.log = reply.log = request.log.child({
           "correlation-id": request.correlationId,
         })
       }
@@ -23,27 +24,32 @@ export const requestLoggingPlugin = fastifyPlugin(
 
     // write access logs
     const accessLogger = app.rootLogger.child({ log_type: "access" })
-    app.addHook("onResponse", function (request, reply, done) {
-      const { url, queryString } = separateQueryStringFromUrl(request.raw.url!)
-      const logLevel =
-        typeof reply.context.config.accessLogLevel === "string"
-          ? reply.context.config.accessLogLevel
-          : "info"
-      const logFn = accessLogger[logLevel] || accessLogger.info
-      logFn.call(accessLogger, {
-        [requestIdLogLabel]: request.id,
-        remote_address: request.ip,
-        response_time: Math.round(reply.getResponseTime()),
-        received_at: iso8601WithLocalOffset(request.receivedAt),
-        "correlation-id": request.correlationId,
-        request_method: request.raw.method,
-        uri: url,
-        query_string: queryString,
-        status: reply.res.statusCode,
-        user_agent: request.headers["user-agent"] || "",
-      })
-      done()
-    })
+    app.addHook<RouteGenericInterface, { accessLogLevel?: string }>(
+      "onResponse",
+      function (request, reply, done) {
+        const { url, queryString } = separateQueryStringFromUrl(
+          request.raw.url!
+        )
+        const logLevel =
+          typeof reply.context.config.accessLogLevel === "string"
+            ? reply.context.config.accessLogLevel
+            : "info"
+        const logFn = accessLogger[logLevel] || accessLogger.info
+        logFn.call(accessLogger, {
+          [requestIdLogLabel]: request.id,
+          remote_address: request.ip,
+          response_time: Math.round(reply.getResponseTime()),
+          received_at: iso8601WithLocalOffset(request.receivedAt),
+          "correlation-id": request.correlationId,
+          request_method: request.raw.method,
+          uri: url,
+          query_string: queryString,
+          status: reply.statusCode,
+          user_agent: request.headers["user-agent"] || "",
+        })
+        done()
+      }
+    )
   },
   { decorators: { fastify: ["rootLogger"], request: ["correlationId"] } }
 )
@@ -62,6 +68,7 @@ function separateQueryStringFromUrl(
   }
 }
 
+// TODO
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function extractOriginalIp(headers: IncomingHttpHeaders): string | null {
   const header = headers["true-client-ip"] || headers["x-forwarded-for"] || null

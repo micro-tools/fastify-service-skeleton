@@ -8,7 +8,7 @@ export const serviceMetadata = fastifyPlugin(
   },
   {
     name: "service-metadata",
-    fastify: "2.x",
+    fastify: "3.x",
   }
 )
 

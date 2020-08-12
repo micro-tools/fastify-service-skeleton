@@ -1,7 +1,7 @@
 import { isIP } from "net"
+import { InjectOptions } from "light-my-request"
 import { createDestinationStream, collectLogsUntil } from "./logger_test_utils"
 import { createServiceSkeleton } from "../skeleton"
-import { HTTPInjectOptions } from "fastify"
 
 describe("Request Logging", () => {
   const serviceName = "request-logging-test"
@@ -22,7 +22,7 @@ describe("Request Logging", () => {
       reply.code(200).send()
     })
     await app.ready()
-    const request: HTTPInjectOptions = {
+    const request: InjectOptions = {
       method: "GET",
       url: "/test",
       query: { nums: ["1", "2"] },

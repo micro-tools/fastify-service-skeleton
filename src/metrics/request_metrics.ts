@@ -3,13 +3,14 @@ import type * as promClient from "prom-client"
 import fastifyPlugin from "fastify-plugin"
 import { PrometheusMeter } from "./prometheus_meter"
 import { throwIfUndefined } from "../utils"
+import { RouteGenericInterface } from "fastify/types/route"
 
 type DefaultLabel = "status_code" | "method" | "path"
 const defaultLabels: DefaultLabel[] = ["status_code", "method", "path"]
 
 export const requestMetricsPlugin = fastifyPlugin(initRequestMetrics, {
   name: "request-metrics",
-  fastify: "2.x",
+  fastify: "3.x",
   decorators: {
     fastify: ["prometheusMeter"],
   },
@@ -43,24 +44,23 @@ async function initRequestMetrics<ExtraLabel extends string>(
     done()
   })
 
-  app.addHook("onResponse", function observeRequestDuration(
-    request,
-    reply,
-    done
-  ) {
-    const defaultLabels = {
-      method: request.req.method || "unknown",
-      path: reply.context.config.url || "unknown",
-      status_code: reply.res.statusCode,
+  app.addHook<RouteGenericInterface, { url?: string }>(
+    "onResponse",
+    function observeRequestDuration(request, reply, done) {
+      const defaultLabels = {
+        method: request.method || "unknown",
+        path: reply.context.config.url || "unknown",
+        status_code: reply.statusCode,
+      }
+      durationHistogram.observe(
+        extraLabelNames
+          ? { ...defaultLabels, ...request.requestMetrics.extraLabels }
+          : defaultLabels,
+        reply.getResponseTime() / 1000
+      )
+      done()
     }
-    durationHistogram.observe(
-      extraLabelNames
-        ? { ...defaultLabels, ...request.requestMetrics.extraLabels }
-        : defaultLabels,
-      reply.getResponseTime() / 1000
-    )
-    done()
-  })
+  )
 }
 
 class RequestMetricsAppDecoration<Label extends string> {

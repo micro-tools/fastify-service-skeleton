@@ -45,10 +45,16 @@ describe("Request metrics", () => {
       .register(requestMetricsPlugin, {
         extraLabelNames: ["test_param", "optional_extra"],
       })
-      .get("/test/:testParam", (request, reply) => {
-        request.requestMetrics.addLabel("test_param", request.params.testParam)
-        reply.send({ ok: "ok" })
-      })
+      .get<{ Params: { testParam: string } }>(
+        "/test/:testParam",
+        (request, reply) => {
+          request.requestMetrics.addLabel(
+            "test_param",
+            request.params.testParam
+          )
+          reply.send({ ok: "ok" })
+        }
+      )
     await app.ready()
     const observeSpy = jest.spyOn(
       app.requestMetrics.durationHistogram,
