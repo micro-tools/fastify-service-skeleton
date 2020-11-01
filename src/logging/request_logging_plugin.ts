@@ -35,18 +35,21 @@ export const requestLoggingPlugin = fastifyPlugin(
             ? reply.context.config.accessLogLevel
             : "info"
         const logFn = accessLogger[logLevel] || accessLogger.info
-        logFn.call(accessLogger, {
-          [requestIdLogLabel]: request.id,
-          remote_address: request.ip,
-          response_time: Math.round(reply.getResponseTime()),
-          received_at: iso8601WithLocalOffset(request.receivedAt),
-          "correlation-id": request.correlationId,
-          request_method: request.raw.method,
-          uri: url,
-          query_string: queryString,
-          status: reply.statusCode,
-          user_agent: request.headers["user-agent"] || "",
-        })
+        logFn.call<typeof accessLogger, [Record<string, unknown>], void>(
+          accessLogger,
+          {
+            [requestIdLogLabel]: request.id,
+            remote_address: request.ip,
+            response_time: Math.round(reply.getResponseTime()),
+            received_at: iso8601WithLocalOffset(request.receivedAt),
+            "correlation-id": request.correlationId,
+            request_method: request.raw.method,
+            uri: url,
+            query_string: queryString,
+            status: reply.statusCode,
+            user_agent: request.headers["user-agent"] || "",
+          }
+        )
         done()
       }
     )

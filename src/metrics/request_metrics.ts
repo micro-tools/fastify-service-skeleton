@@ -47,15 +47,14 @@ async function initRequestMetrics<ExtraLabel extends string>(
   app.addHook<RouteGenericInterface, { url?: string }>(
     "onResponse",
     function observeRequestDuration(request, reply, done) {
-      const defaultLabels = {
-        method: request.method || "unknown",
-        path: reply.context.config.url || "unknown",
-        status_code: reply.statusCode,
-      }
       durationHistogram.observe(
-        extraLabelNames
-          ? { ...defaultLabels, ...request.requestMetrics.extraLabels }
-          : defaultLabels,
+        // @ts-expect-error labels cause a type error that makes no sense to me
+        {
+          method: request.method || "unknown",
+          path: reply.context.config.url || "unknown",
+          status_code: reply.statusCode,
+          ...(extraLabelNames ? request.requestMetrics.extraLabels : {}),
+        },
         reply.getResponseTime() / 1000
       )
       done()
