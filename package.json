@@ -4,6 +4,9 @@
   "description": "Create fastify based microservices even faster.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "files": [
+    "dist/"
+  ],
   "scripts": {
     "build": "rm -rf dist && tsc -p tsconfig.build.json",
     "format:check": "prettier --check 'src/**/*.ts'",
