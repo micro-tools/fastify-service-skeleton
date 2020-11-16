@@ -8,7 +8,8 @@
     "dist/"
   ],
   "scripts": {
-    "build": "rm -rf dist && tsc -p tsconfig.build.json",
+    "build": "rm -rf dist/ && yarn run compile && yarn run lint",
+    "compile": "tsc -p tsconfig.build.json",
     "format:check": "prettier --check 'src/**/*.ts'",
     "format:write": "prettier --write 'src/**/*.ts'",
     "format:staged": "pretty-quick --staged",
@@ -17,12 +18,12 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r ts-node/register node_modules/.bin/jest --runInBand",
-    "prepublishOnly": "npm test && npm run build"
+    "prepublishOnly": "yarn test && yarn run build"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run format:staged",
-      "pre-push": "npm run build && npm run lint && npm test"
+      "pre-commit": "yarn run format:staged",
+      "pre-push": "yarn run build && yarn test"
     }
   },
   "repository": {
