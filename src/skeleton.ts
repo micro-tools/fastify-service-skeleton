@@ -20,6 +20,7 @@ import {
   requestLoggingPlugin,
 } from "./logging/request_logging_plugin"
 import { serviceMetadata } from "./service_metadata"
+import { shutdownPlugin, ShutdownPluginOpts } from "./shutdown"
 import {
   createIsOptionEnabled,
   isOptionEnabled,
@@ -70,6 +71,9 @@ export function createServiceSkeleton(
   if (isPluginEnabled(opts.plugins?.sensible)) {
     app.register(fastifySensible)
   }
+  if (isPluginEnabled(opts.plugins?.shutdown)) {
+    app.register(shutdownPlugin, opts.plugins?.shutdown)
+  }
   if (isPluginEnabled(opts.plugins?.underPressure)) {
     app.register(underPressure, opts.plugins?.underPressure)
   }
@@ -105,6 +109,7 @@ export interface ServiceSkeletonOptions {
     metrics?: Enableable<MetricsOptions>
     httpClient?: Enableable<HttpClientPluginOptions>
     sensible?: boolean
+    shutdown?: Enableable<ShutdownPluginOpts>
     underPressure?: Enableable<underPressure.UnderPressureOptions>
   }
 }
