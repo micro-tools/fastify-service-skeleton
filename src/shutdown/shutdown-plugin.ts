@@ -1,5 +1,6 @@
 import { FastifyInstance } from "fastify"
 import fastifyPlugin from "fastify-plugin"
+import { addEventListenerOnlyOnce } from "../utils"
 
 export const shutdownPlugin = fastifyPlugin(initShutdownPlugin, {
   name: "shutdown",
@@ -16,10 +17,15 @@ async function initShutdownPlugin(
 
   const shutdownOnSignal = createShutdownOnSignal(app)
   for (const signal of signals) {
-    if (process.listenerCount(signal)) {
+    const isListenerAdded = addEventListenerOnlyOnce(
+      process,
+      signal,
+      shutdownOnSignal,
+      true
+    )
+    if (isListenerAdded && process.listenerCount(signal) > 1) {
       app.log.warn(`Found an existing handler for ${signal}`)
     }
-    process.once(signal, shutdownOnSignal)
   }
 }
 
