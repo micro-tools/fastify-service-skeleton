@@ -29,8 +29,8 @@ export const metricsPlugin = fastifyPlugin(
       method: "GET",
       url: opts.endpointPath || "/admin/metrics",
       config: { accessLogLevel: "DEBUG" },
-      handler(_request, reply) {
-        reply.type("text/plain; version=0.0.4").send(register.metrics())
+      async handler(_request, reply) {
+        reply.type("text/plain; version=0.0.4").send(await register.metrics())
       },
     })
   },
