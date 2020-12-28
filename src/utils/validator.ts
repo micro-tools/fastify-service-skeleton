@@ -1,18 +1,19 @@
 import Ajv, * as ajv from "ajv"
+import addFormats from "ajv-formats"
 
-const staticAjvInstance = new Ajv()
+const staticAjvInstance = addFormats(new Ajv())
 
 export class Validator<T> {
   readonly validateFunc: ajv.ValidateFunction<T>
-  readonly schema: Record<string, unknown>
+  readonly schema: ValidationSchema
   readonly schemaName: string
 
   constructor(
     schemaName: string,
-    schema: Record<string, unknown>,
+    schema: ValidationSchema,
     options?: ajv.Options
   ) {
-    const ajv = options ? new Ajv(options) : staticAjvInstance
+    const ajv = options ? addFormats(new Ajv(options)) : staticAjvInstance
     this.validateFunc = ajv.compile(schema)
     this.schema = schema
     this.schemaName = schemaName
@@ -60,7 +61,7 @@ export class ValidationError extends Error {
   constructor(
     readonly candidate: unknown,
     readonly schemaName: string,
-    readonly schema: Record<string, unknown>,
+    readonly schema: ValidationSchema,
     readonly validationErrors: ajv.ErrorObject[]
   ) {
     super(
@@ -76,6 +77,8 @@ export type ValidationResultHandler = (
 
 export interface ValidationContext {
   candidate: unknown
-  schema: Record<string, unknown>
+  schema: ValidationSchema
   schemaName: string
 }
+
+export type ValidationSchema = ajv.Schema
