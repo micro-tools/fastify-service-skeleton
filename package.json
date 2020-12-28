@@ -1,6 +1,6 @@
 {
   "name": "fastify-service-skeleton",
-  "version": "0.28.0",
+  "version": "0.28.1",
   "description": "Create fastify based microservices even faster.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
