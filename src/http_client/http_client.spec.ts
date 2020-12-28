@@ -108,7 +108,6 @@ describe("httpClient plugin", () => {
       expect(res.statusCode).toBe(500)
       expect(fakeTargetNock.isDone())
       expect(incErrorCounterSpy).toHaveBeenCalledTimes(1)
-      // @ts-expect-error jest does not infer the used inc method overload
       expect(incErrorCounterSpy.mock.calls[0][0]).toStrictEqual({
         host: "testhost",
         error_name: "HTTPError",
@@ -148,7 +147,6 @@ describe("httpClient plugin", () => {
       expect(res.statusCode).toBe(500)
       expect(fakeTargetNock.isDone())
       expect(incErrorCounterSpy).toHaveBeenCalledTimes(1)
-      // @ts-expect-error jest does not infer the used inc method overload
       expect(incErrorCounterSpy.mock.calls[0][0]).toStrictEqual({
         host: "testhost",
         error_name: "RequestError",

@@ -1,4 +1,4 @@
-import { Registry, Metric } from "prom-client"
+import { Registry } from "prom-client"
 import { PrometheusMeter } from "./prometheus_meter_interface"
 import {
   createPrometheusMeter,
@@ -14,8 +14,10 @@ test("Multiple metric instantiations with the same config throw an error by defa
     duplicateStrategy: undefined,
   })
   for (const [createMetric, config] of testVariants) {
+    // @ts-expect-error compiler is not happy with it but it's ok
     createMetric(config)
     expect(() => {
+      // @ts-expect-error compiler is not happy with it but it's ok
       createMetric(config)
     }).toThrowError()
   }
@@ -28,8 +30,10 @@ test("Multiple metric instantiations with the same config throw an error if `dup
     duplicateStrategy: duplicateStrategies.preventAnyDuplicate,
   })
   for (const [createMetric, config] of testVariants) {
+    // @ts-expect-error compiler is not happy with it but it's ok
     createMetric(config)
     expect(() => {
+      // @ts-expect-error compiler is not happy with it but it's ok
       createMetric(config)
     }).toThrowError()
   }
@@ -42,8 +46,10 @@ test("Multiple metric instantiations with the same config do not throw an error 
     duplicateStrategy: duplicateStrategies.returnExistingIfPropsAreEqual,
   })
   for (const [createMetric, config] of testVariants) {
+    // @ts-expect-error compiler is not happy with it but it's ok
     createMetric(config)
     expect(() => {
+      // @ts-expect-error compiler is not happy with it but it's ok
       createMetric(config)
     }).not.toThrowError()
   }
@@ -56,8 +62,10 @@ test("Multiple metric instantiations with a different config throw an error if `
     duplicateStrategy: duplicateStrategies.returnExistingIfPropsAreEqual,
   })
   for (const [createMetric, config] of testVariants) {
+    // @ts-expect-error compiler is not happy with it but it's ok
     createMetric(config)
     expect(() => {
+      // @ts-expect-error compiler is not happy with it but it's ok
       createMetric({ ...config, help: "different help text" })
     }).toThrowError()
   }
@@ -69,9 +77,7 @@ function createTestVariants({
 }: {
   promMeter: PrometheusMeter
   duplicateStrategy: DuplicateStrategy | undefined
-}): Array<
-  [(config: MetricConfiguration) => Metric<string>, MetricConfiguration]
-> {
+}): Array<[MetricFactory, MetricConfiguration]> {
   return [
     [
       promMeter.createCounter,
@@ -143,3 +149,9 @@ function createTestVariants({
     ],
   ]
 }
+
+type MetricFactory =
+  | PrometheusMeter["createCounter"]
+  | PrometheusMeter["createGauge"]
+  | PrometheusMeter["createHistogram"]
+  | PrometheusMeter["createSummary"]
