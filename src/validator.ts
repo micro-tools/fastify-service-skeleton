@@ -1,16 +1,16 @@
-import Ajv from "ajv"
+import Ajv, * as ajv from "ajv"
 
-const staticAjvInstance = Ajv()
+const staticAjvInstance = new Ajv()
 
 export class Validator<T> {
-  readonly validateFunc: Ajv.ValidateFunction
+  readonly validateFunc: ajv.ValidateFunction<T>
   readonly schema: Record<string, unknown>
   readonly schemaName: string
 
   constructor(
     schemaName: string,
     schema: Record<string, unknown>,
-    options?: Ajv.Options
+    options?: ajv.Options
   ) {
     const ajv = options ? new Ajv(options) : staticAjvInstance
     this.validateFunc = ajv.compile(schema)
@@ -22,7 +22,7 @@ export class Validator<T> {
     candidate: unknown,
     resultHandler?: ValidationResultHandler
   ): candidate is T {
-    const isValid = this.validateFunc(candidate) as boolean
+    const isValid = this.validateFunc(candidate)
     if (resultHandler) {
       const errors = this.validateFunc.errors ?? null
       resultHandler(
@@ -61,7 +61,7 @@ export class ValidationError extends Error {
     readonly candidate: unknown,
     readonly schemaName: string,
     readonly schema: Record<string, unknown>,
-    readonly validationErrors: Ajv.ErrorObject[]
+    readonly validationErrors: ajv.ErrorObject[]
   ) {
     super(
       `Invalid ${schemaName}: ${staticAjvInstance.errorsText(validationErrors)}`
