@@ -1,5 +1,6 @@
 import fastifyPlugin from "fastify-plugin"
 import got, { Options, Got, RequestError, Response } from "got"
+import merge from "lodash.merge"
 import { FastifyInstance } from "fastify"
 import { Logger } from "../logging/logging.types"
 import { PrometheusMeter } from "../metrics"
@@ -53,37 +54,38 @@ function createAppHttpClient(
   instrumentation: HttpClientInstrumentation,
   defaultOptions?: HttpClientOptions
 ): HttpClient {
+  const alwaysHooks: HttpClientOptions["hooks"] = {
+    beforeRequest: [
+      (options): void => {
+        instrumentation.beforeRequest(options)
+      },
+    ],
+    afterResponse: [
+      (response): Response => {
+        instrumentation.receivedResponse(response)
+        return response
+      },
+    ],
+    beforeError: [
+      (error): RequestError => {
+        instrumentation.beforeError(error)
+        return error
+      },
+    ],
+    beforeRetry: [
+      (options, error, retryCount): void =>
+        instrumentation.beforeRetry(options, error, retryCount),
+    ],
+    beforeRedirect: [
+      (options, response): void => {
+        instrumentation.beforeRedirect(options, response)
+      },
+    ],
+  }
   return got.extend({
     retry: { limit: 0 }, // Do not retry by default
     ...defaultOptions,
-    hooks: {
-      beforeRequest: [
-        (options): void => {
-          instrumentation.beforeRequest(options)
-        },
-      ],
-      afterResponse: [
-        (response): Response => {
-          instrumentation.receivedResponse(response)
-          return response
-        },
-      ],
-      beforeError: [
-        (error): RequestError => {
-          instrumentation.beforeError(error)
-          return error
-        },
-      ],
-      beforeRetry: [
-        (options, error, retryCount): void =>
-          instrumentation.beforeRetry(options, error, retryCount),
-      ],
-      beforeRedirect: [
-        (options, response): void => {
-          instrumentation.beforeRedirect(options, response)
-        },
-      ],
-    },
+    hooks: merge({}, defaultOptions?.hooks, alwaysHooks),
   })
 }
 
