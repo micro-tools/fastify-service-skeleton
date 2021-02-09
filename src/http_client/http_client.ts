@@ -102,8 +102,11 @@ class HttpClientRequestDecoration {
    */
   create(options?: HttpClientOptions): HttpClient {
     return this.appHttpClient.extend({
-      headers: { [this.correlationIdHeader]: this.correlationId },
       ...options,
+      headers: {
+        [this.correlationIdHeader]: this.correlationId,
+        ...options?.headers,
+      },
     })
   }
 }

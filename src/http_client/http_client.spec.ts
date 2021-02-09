@@ -62,7 +62,13 @@ describe("httpClient plugin", () => {
         reply.code(200).send()
       })
     await app.ready()
-    const nockScope = nock(fakeTargetUrl).get("/").reply(200, '{"ok": true}')
+    const nockScope = nock(fakeTargetUrl)
+      .get("/")
+      .matchHeader("create-client-header", "createClient")
+      .matchHeader("request-header", "request")
+      .matchHeader("plugin-register-header", "pluginRegister")
+      .matchHeader("Correlation-Id", correlationId)
+      .reply(200, '{"ok": true}')
 
     const res = await app.inject({
       method: "GET",
