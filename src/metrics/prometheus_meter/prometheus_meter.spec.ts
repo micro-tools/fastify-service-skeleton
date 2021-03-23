@@ -7,7 +7,7 @@ import {
   DuplicateStrategy,
 } from "./prometheus_meter_factory"
 
-test("Multiple metric instantiations with the same config throw an error by default (promClient default)", async () => {
+test("Multiple metric instantiations with the same config throw an error by default (promClient default)", () => {
   const promMeter = createPrometheusMeter([new Registry()])
   const testVariants = createTestVariants({
     promMeter,
@@ -23,7 +23,7 @@ test("Multiple metric instantiations with the same config throw an error by defa
   }
 })
 
-test("Multiple metric instantiations with the same config throw an error if `duplicateStrategy` is `preventAllDuplicates`", async () => {
+test("Multiple metric instantiations with the same config throw an error if `duplicateStrategy` is `preventAllDuplicates`", () => {
   const promMeter = createPrometheusMeter([new Registry()])
   const testVariants = createTestVariants({
     promMeter,
@@ -39,7 +39,7 @@ test("Multiple metric instantiations with the same config throw an error if `dup
   }
 })
 
-test("Multiple metric instantiations with the same config do not throw an error if `duplicateStrategy` is `returnExistingIfPropsAreEqual`", async () => {
+test("Multiple metric instantiations with the same config do not throw an error if `duplicateStrategy` is `returnExistingIfPropsAreEqual`", () => {
   const promMeter = createPrometheusMeter([new Registry()])
   const testVariants = createTestVariants({
     promMeter,
@@ -55,7 +55,7 @@ test("Multiple metric instantiations with the same config do not throw an error 
   }
 })
 
-test("Multiple metric instantiations with a different config throw an error if `duplicateStrategy` is `returnExistingIfPropsAreEqual`", async () => {
+test("Multiple metric instantiations with a different config throw an error if `duplicateStrategy` is `returnExistingIfPropsAreEqual`", () => {
   const promMeter = createPrometheusMeter([new Registry()])
   const testVariants = createTestVariants({
     promMeter,
@@ -80,6 +80,7 @@ function createTestVariants({
 }): Array<[MetricFactory, MetricConfiguration]> {
   return [
     [
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       promMeter.createCounter,
       {
         name: "test_counter",
@@ -88,6 +89,7 @@ function createTestVariants({
       },
     ],
     [
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       promMeter.createCounter,
       {
         name: "test_counter_with_labels",
@@ -97,6 +99,7 @@ function createTestVariants({
       },
     ],
     [
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       promMeter.createGauge,
       {
         name: "test_gauge",
@@ -105,6 +108,7 @@ function createTestVariants({
       },
     ],
     [
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       promMeter.createGauge,
       {
         name: "test_gauge_with_labels",
@@ -114,6 +118,7 @@ function createTestVariants({
       },
     ],
     [
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       promMeter.createHistogram,
       {
         name: "test_histogram",
@@ -122,6 +127,7 @@ function createTestVariants({
       },
     ],
     [
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       promMeter.createHistogram,
       {
         name: "test_histogram_with_labels",
@@ -131,6 +137,7 @@ function createTestVariants({
       },
     ],
     [
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       promMeter.createSummary,
       {
         name: "test_summary",
@@ -139,6 +146,7 @@ function createTestVariants({
       },
     ],
     [
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       promMeter.createSummary,
       {
         name: "test_summary_with_labels",

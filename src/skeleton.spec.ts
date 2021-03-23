@@ -26,7 +26,7 @@ describe("serviceSkeleton", () => {
       enablePluginsByDefault: false,
     }).get("/", (request, reply) => {
       request.log.info("log from request")
-      reply.code(200).send()
+      void reply.code(200).send()
     })
     await app.ready()
     app.log.info("log from app")
@@ -56,8 +56,10 @@ describe("serviceSkeleton", () => {
         orderlyExitProcess: false, // TODO: does not work when it is enabled
       },
     })
-    await Promise.all([app1.ready(), app2.ready()]).finally(() =>
-      Promise.all([app1.close(), app2.close()])
-    )
+    try {
+      await Promise.all([app1.ready(), app2.ready()])
+    } finally {
+      await Promise.all([app1.close(), app2.close()])
+    }
   })
 })

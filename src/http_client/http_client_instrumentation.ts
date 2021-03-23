@@ -58,8 +58,8 @@ export class HttpClientInstrumentation {
 
   beforeRetry(
     options: NormalizedOptions,
-    error?: RequestError,
-    retryCount?: number
+    error: RequestError | undefined,
+    retryCount: number | undefined
   ): void {
     const retryLimit = options.retry.limit
     this.logger.debug(
@@ -69,7 +69,9 @@ export class HttpClientInstrumentation {
         err: error,
         http_client_options: createOptionsLog(options),
       },
-      `HTTP client will retry #${retryCount} of ${retryLimit}`
+      `HTTP client will retry #${
+        retryCount ?? String(retryCount)
+      } of ${retryLimit}`
     )
   }
 
@@ -95,7 +97,7 @@ export class HttpClientInstrumentation {
       code:
         error instanceof HTTPError
           ? error.response.statusCode
-          : (error as RequestError).code || "undefined",
+          : error.code || "undefined",
     })
     this.logger.error(log, `HTTP client error: ${error.message}`)
   }

@@ -19,7 +19,7 @@ describe("Request Logging", () => {
         requestLogging: { enable: true },
       },
     }).get("/test", (request, reply) => {
-      reply.code(200).send()
+      void reply.code(200).send()
     })
     await app.ready()
     const request: InjectOptions = {
@@ -72,7 +72,7 @@ describe("Request Logging", () => {
     }).get("/test", {
       config: { accessLogLevel },
       handler(request, reply) {
-        reply.code(200).send()
+        void reply.code(200).send()
       },
     })
     await app.ready()
@@ -100,7 +100,7 @@ describe("Request Logging", () => {
     }).get("/", (request, reply) => {
       request.log.info("in the context of a request #1")
       reply.log.info("in the context of a request #2")
-      reply.code(200).send()
+      void reply.code(200).send()
     })
     await app.ready()
     const responsePromise = app.inject({ method: "GET", url: "/" })

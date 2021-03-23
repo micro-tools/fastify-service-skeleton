@@ -16,6 +16,7 @@ export const requestMetricsPlugin = fastifyPlugin(initRequestMetrics, {
   },
 })
 
+// eslint-disable-next-line @typescript-eslint/require-await
 async function initRequestMetrics<ExtraLabel extends string>(
   app: FastifyInstance,
   opts: RequestMetricsOptions<ExtraLabel>

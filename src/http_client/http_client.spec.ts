@@ -25,7 +25,7 @@ describe("httpClient plugin", () => {
       .get("/", (request, reply) => {
         expect(typeof request.httpClient.create).toBe("function")
         expect(typeof request.httpClient.create()).toBe("function")
-        reply.code(200).send()
+        void reply.code(200).send()
       })
     await app.ready()
     const res = await app.inject({ method: "GET", url: "/" })
@@ -59,7 +59,7 @@ describe("httpClient plugin", () => {
             headers: { "create-client-header": "createClient" },
           })
           .get(fakeTargetUrl, { headers: { "request-header": "request" } })
-        reply.code(200).send()
+        void reply.code(200).send()
       })
     await app.ready()
     const nockScope = nock(fakeTargetUrl)
@@ -99,7 +99,7 @@ describe("httpClient plugin", () => {
           await request.httpClient
             .create({ throwHttpErrors: true })
             .get(fakeTargetUrl)
-          reply.code(200).send()
+          void reply.code(200).send()
         })
       await app.ready()
       const incErrorCounterSpy = jest.spyOn(
@@ -138,7 +138,7 @@ describe("httpClient plugin", () => {
           await request.httpClient
             .create({ throwHttpErrors: true })
             .get(fakeTargetUrl)
-          reply.code(200).send()
+          void reply.code(200).send()
         })
       await app.ready()
       const incErrorCounterSpy = jest.spyOn(

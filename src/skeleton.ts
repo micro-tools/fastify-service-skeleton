@@ -42,7 +42,7 @@ export function createServiceSkeleton(
   checkLoggingOptionsPlausibility(appLogger, opts, finalFastifyOpts)
   const app = fastify<http.Server>(finalFastifyOpts)
   app.decorate("rootLogger", rootLogger)
-  app.register(serviceMetadata, { serviceName: opts.serviceName })
+  void app.register(serviceMetadata, { serviceName: opts.serviceName })
 
   // Enable all plugins unless explicitly disabled by default,
   // but this behaviour can be modified via `enablePluginsByDefault`
@@ -51,31 +51,31 @@ export function createServiceSkeleton(
     orderlyExitProcess(appLogger)
   }
   if (isPluginEnabled(opts.plugins?.healthCheck)) {
-    app.register(healthCheckPlugin, opts.plugins?.healthCheck)
+    void app.register(healthCheckPlugin, opts.plugins?.healthCheck)
   }
   if (isPluginEnabled(opts.plugins?.correlationId)) {
-    app.register(correlationIdPlugin, opts.plugins?.correlationId)
+    void app.register(correlationIdPlugin, opts.plugins?.correlationId)
   }
   if (isPluginEnabled(opts.plugins?.requestLogging)) {
-    app.register(requestLoggingPlugin, {
+    void app.register(requestLoggingPlugin, {
       requestIdLogLabel: finalFastifyOpts.requestIdLogLabel,
       ...opts.plugins?.requestLogging,
     })
   }
   if (isPluginEnabled(opts.plugins?.metrics)) {
-    app.register(metricsPlugin, opts.plugins?.metrics)
+    void app.register(metricsPlugin, opts.plugins?.metrics)
   }
   if (isPluginEnabled(opts.plugins?.httpClient)) {
-    app.register(httpClientPlugin, opts.plugins?.httpClient)
+    void app.register(httpClientPlugin, opts.plugins?.httpClient)
   }
   if (isPluginEnabled(opts.plugins?.sensible)) {
-    app.register(fastifySensible)
+    void app.register(fastifySensible)
   }
   if (isPluginEnabled(opts.plugins?.shutdown)) {
-    app.register(shutdownPlugin, opts.plugins?.shutdown)
+    void app.register(shutdownPlugin, opts.plugins?.shutdown)
   }
   if (isPluginEnabled(opts.plugins?.underPressure)) {
-    app.register(underPressure, opts.plugins?.underPressure)
+    void app.register(underPressure, opts.plugins?.underPressure)
   }
   return app
 }

@@ -9,7 +9,7 @@ describe("Correlation ID", () => {
         expect(this.hasRequestDecorator("correlationId"))
         expect(typeof request.correlationId).toBe("string")
         expect(request.correlationId).not.toBe("")
-        reply.code(200).send()
+        void reply.code(200).send()
       })
     await app.ready()
     const { statusCode } = await app.inject({ method: "GET", url: "/" })
@@ -25,7 +25,7 @@ describe("Correlation ID", () => {
       .get("/", function (request, reply) {
         expect(this.hasRequestDecorator("correlationId"))
         expect(request.correlationId).toBe(correlationId)
-        reply.code(200).send()
+        void reply.code(200).send()
       })
     await app.ready()
     const { statusCode } = await app.inject({
@@ -43,7 +43,7 @@ describe("Correlation ID", () => {
     const app = Fastify()
       .register(correlationIdPlugin)
       .get("/", function (request, reply) {
-        reply.code(200).send()
+        void reply.code(200).send()
       })
     await app.ready()
     const response = await app.inject({

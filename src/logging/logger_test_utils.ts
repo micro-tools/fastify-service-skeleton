@@ -13,6 +13,7 @@ export function createDestinationStream(
 ): stream.Transform {
   const result = split((data) => {
     try {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return JSON.parse(data)
     } catch (err) {
       console.log(err)
@@ -26,7 +27,9 @@ export function createDestinationStream(
 export async function nextLog(
   destinationStream: stream.Transform
 ): Promise<LogObj> {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const [log] = await once(destinationStream, "data")
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return log
 }
 
@@ -37,6 +40,7 @@ export function collectLogsUntil(
 ): Promise<LogObj[]> {
   let stream = rx.fromEvent<LogObj>(destinationStream, "data")
   if (consoleLogItems) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     stream = stream.pipe(rxOp.tap(console.log))
   }
   return stream

@@ -8,11 +8,12 @@ import {
 } from "./prometheus_meter"
 
 export const metricsPlugin = fastifyPlugin(
+  // eslint-disable-next-line @typescript-eslint/require-await
   async (app, opts: MetricsOptions) => {
     // Use a dedicated local register instead of the global one
     const register = opts.register || new promClient.Registry()
 
-    app.register(prometheusMeterPlugin, {
+    void app.register(prometheusMeterPlugin, {
       // Use `register` by default, but may me overriden by specific options
       defaultRegisters: [register],
       ...opts.prometheusMeter,
@@ -22,7 +23,7 @@ export const metricsPlugin = fastifyPlugin(
       promClient.collectDefaultMetrics({ register, ...opts.defaultMetrics })
     }
     if (isOptionEnabled(opts.requestMetrics)) {
-      app.register(requestMetricsPlugin, opts.requestMetrics)
+      void app.register(requestMetricsPlugin, opts.requestMetrics)
     }
 
     app.route({
@@ -30,7 +31,9 @@ export const metricsPlugin = fastifyPlugin(
       url: opts.endpointPath || "/admin/metrics",
       config: { accessLogLevel: "DEBUG" },
       async handler(_request, reply) {
-        reply.type("text/plain; version=0.0.4").send(await register.metrics())
+        void reply
+          .type("text/plain; version=0.0.4")
+          .send(await register.metrics())
       },
     })
   },

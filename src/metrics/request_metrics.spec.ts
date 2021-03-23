@@ -10,7 +10,7 @@ describe("Request metrics", () => {
       .register(prometheusMeterPlugin, { defaultRegisters: [new Registry()] })
       .register(requestMetricsPlugin)
       .get("/test/:someParam", (request, reply) => {
-        reply.send({ ok: "ok" })
+        void reply.send({ ok: "ok" })
       })
     await app.ready()
     const observeSpy = jest.spyOn(
@@ -52,7 +52,7 @@ describe("Request metrics", () => {
             "test_param",
             request.params.testParam
           )
-          reply.send({ ok: "ok" })
+          void reply.send({ ok: "ok" })
         }
       )
     await app.ready()

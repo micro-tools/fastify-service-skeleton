@@ -4,6 +4,7 @@ import { createPrometheusMeter } from "./prometheus_meter_factory"
 import type { PrometheusMeter } from "./prometheus_meter_interface"
 
 export const prometheusMeterPlugin = fastifyPlugin(
+  // eslint-disable-next-line @typescript-eslint/require-await
   async function prometheusMeterPlugin(app, opts: PrometheusMeterOptions) {
     // Use a dedicated local register instead of the global one
     const defaultRegisters = opts.defaultRegisters || [

@@ -7,6 +7,7 @@ export const shutdownPlugin = fastifyPlugin(initShutdownPlugin, {
   fastify: "3.x",
 })
 
+// eslint-disable-next-line @typescript-eslint/require-await
 async function initShutdownPlugin(
   app: FastifyInstance,
   opts: ShutdownPluginOpts

@@ -2,6 +2,7 @@ import { v4 as uuidV4 } from "uuid"
 import fastifyPlugin from "fastify-plugin"
 
 export const correlationIdPlugin = fastifyPlugin(
+  // eslint-disable-next-line @typescript-eslint/require-await
   async function correlationIdPlugin(app, opts: CorrelationIdOptions) {
     const requestHeader = opts.requestHeader || "correlation-id"
     const responseHeader = opts.responseHeader || "Correlation-Id"
@@ -19,7 +20,7 @@ export const correlationIdPlugin = fastifyPlugin(
         request.correlationId = headerValue[0]
       }
       // Add the resulting correlationId as response header
-      reply.header(responseHeader, request.correlationId)
+      void reply.header(responseHeader, request.correlationId)
       done()
     })
   },

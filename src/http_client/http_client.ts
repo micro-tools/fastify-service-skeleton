@@ -16,6 +16,7 @@ export const httpClientPlugin = fastifyPlugin(initHttpClient, {
   decorators: { request: ["correlationId"] },
 })
 
+// eslint-disable-next-line @typescript-eslint/require-await
 async function initHttpClient(
   app: FastifyInstance,
   opts: HttpClientPluginOptions

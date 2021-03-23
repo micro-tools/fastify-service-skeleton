@@ -5,6 +5,7 @@ import { LoggerOptions } from "./logging.types"
 import { RouteGenericInterface } from "fastify/types/route"
 
 export const requestLoggingPlugin = fastifyPlugin(
+  // eslint-disable-next-line @typescript-eslint/require-await
   async function requestLoggingPlugin(app, opts: RequestLoggingOptions) {
     const requestIdLogLabel = opts.requestIdLogLabel || "request_id"
 
@@ -38,6 +39,7 @@ export const requestLoggingPlugin = fastifyPlugin(
         logFn.call<typeof accessLogger, [Record<string, unknown>], void>(
           accessLogger,
           {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             [requestIdLogLabel]: request.id,
             remote_address: request.ip,
             response_time: Math.round(reply.getResponseTime()),

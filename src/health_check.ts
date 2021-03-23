@@ -1,5 +1,6 @@
 import { FastifyInstance } from "fastify"
 
+// eslint-disable-next-line @typescript-eslint/require-await
 export async function healthCheckPlugin(
   app: FastifyInstance,
   opts: HealthCheckOptions
@@ -9,7 +10,7 @@ export async function healthCheckPlugin(
     url: opts.endpointPath || "/admin/healthcheck",
     config: { accessLogLevel: "DEBUG" },
     handler(_request, reply) {
-      reply.code(200).send()
+      void reply.code(200).send()
     },
   })
 }

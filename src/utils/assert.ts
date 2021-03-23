@@ -36,7 +36,7 @@ export function assertIsNonEmptyObject<T extends object>(
   valueName?: string
 ): asserts obj is T {
   for (const key in obj) {
-    if (hasOwnProperty.call(obj, key)) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
       return
     }
   }
@@ -44,8 +44,6 @@ export function assertIsNonEmptyObject<T extends object>(
     message: `Expected ${valueName || "value"} to be a non-empty object`,
   })
 }
-
-const hasOwnProperty = Object.prototype.hasOwnProperty
 
 export type NotUndefined<T> = T extends undefined ? never : T
 export type NotNullish<T> = T extends undefined | null ? never : T
