@@ -45,7 +45,7 @@
   "dependencies": {
     "@types/pino": "^6.3.6",
     "ajv": "^7.2.3",
-    "ajv-formats": "^1.5.1",
+    "ajv-formats": "^2.1.0",
     "fastify": "^3.14.0",
     "fastify-plugin": "^3.0.0",
     "fastify-sensible": "^3.1.1",
