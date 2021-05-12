@@ -77,7 +77,7 @@
     "nock": "^13.0.7",
     "prettier": "^2.2.1",
     "pretty-quick": "^3.1.0",
-    "rxjs": "^6.6.3",
+    "rxjs": "^7.0.1",
     "split2": "^3.2.2",
     "strict-event-emitter-types": "^2.0.0",
     "ts-jest": "^26.5.1",
