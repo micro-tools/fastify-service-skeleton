@@ -36,7 +36,7 @@
       "type": "node",
       "request": "launch",
       "name": "Run example",
-      "args": ["example/example.ts"],
+      "args": ["example/index.ts"],
       "runtimeArgs": ["-r", "ts-node/register/transpile-only"],
       "console": "integratedTerminal",
       "smartStep": true,
