@@ -41,6 +41,9 @@ export const requestLoggingPlugin = fastifyPlugin(
           {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             [requestIdLogLabel]: request.id,
+            msg: `${request.raw.method!} ${request.raw.url!} ${
+              reply.statusCode
+            }`,
             remote_address: request.ip,
             response_time: Math.round(reply.getResponseTime()),
             received_at: iso8601WithLocalOffset(request.receivedAt),
@@ -71,14 +74,6 @@ function separateQueryStringFromUrl(
   } else {
     return { url, queryString: "" }
   }
-}
-
-// TODO
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function extractOriginalIp(headers: IncomingHttpHeaders): string | null {
-  const header = headers["true-client-ip"] || headers["x-forwarded-for"] || null
-  const ips = Array.isArray(header) ? header[0] : header
-  return typeof ips === "string" ? ips.split(",")[0].trim() : null
 }
 
 export interface RequestLoggingOptions {
