@@ -26,7 +26,7 @@ export function createDestinationStream(
 
 export async function nextLog(
   destinationStream: stream.Transform
-): Promise<LogObj> {
+): Promise<Record<string, unknown>> {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const [log] = await once(destinationStream, "data")
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
@@ -37,17 +37,15 @@ export function collectLogsUntil(
   destinationStream: stream.Transform,
   stopPromise: Promise<unknown>,
   consoleLogItems = false
-): Promise<LogObj[]> {
-  let stream = rx.fromEvent<LogObj>(destinationStream, "data")
+): Promise<Record<string, unknown>[]> {
+  let stream = rx.fromEvent(destinationStream, "data") as rx.Observable<
+    Record<string, unknown>
+  >
   if (consoleLogItems) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     stream = stream.pipe(rxOp.tap(console.log))
   }
-  return stream
-    .pipe(rxOp.takeUntil(rx.from(stopPromise)), rxOp.toArray())
-    .toPromise()
-}
-
-interface LogObj {
-  [prop: string]: unknown
+  return rx.firstValueFrom(
+    stream.pipe(rxOp.takeUntil(rx.from(stopPromise)), rxOp.toArray())
+  )
 }
