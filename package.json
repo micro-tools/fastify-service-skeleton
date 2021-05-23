@@ -15,18 +15,13 @@
     "format:write": "prettier --write 'src/**/*.ts'",
     "format:staged": "pretty-quick --staged",
     "lint": "eslint src --ext .js,.ts",
+    "prepare": "husky install",
     "prepublishOnly": "yarn test && yarn run build",
     "start": "ts-node example/index.ts",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r ts-node/register node_modules/.bin/jest --runInBand"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "yarn run format:staged",
-      "pre-push": "yarn run build && yarn test"
-    }
   },
   "repository": {
     "type": "git",
