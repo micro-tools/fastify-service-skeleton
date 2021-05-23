@@ -40,6 +40,26 @@ async function examplePlugin(
     // should never get here, because the response above will throw
     reply.send(response.body)
   })
+
+  app.get("/throw", async () => {
+    throw new Error("ups")
+  })
+
+  app.get<{ Querystring: { name: string } }>(
+    "/hello",
+    {
+      schema: {
+        querystring: {
+          type: "object",
+          properties: { name: { type: "string" } },
+          required: ["name"],
+        },
+      },
+    },
+    async (request) => {
+      return { hello: request.query.name }
+    }
+  )
 }
 
 interface ExampleOptions {
