@@ -4792,9 +4792,9 @@ typescript@^4.2.3:
   integrity sha512-uauPG7XZn9F/mo+7MrsRjyvbxFpzemRjKEZXS4AK83oP2KKOJPvb+9cO/gmnv8arWZvhnjVOXz7B49m1l0e9Ew==
 
 under-pressure@^5.6.0:
-  version "5.6.0"
-  resolved "https://registry.yarnpkg.com/under-pressure/-/under-pressure-5.6.0.tgz#a567cb034cfecc1d1ace18b1a3bd170c471b9f2c"
-  integrity sha512-bs6ylFUxmdyi42Ruh705FLGcxe4UdDLWuD+ihbgt4iznRKW9iMgJ/jF5x6O5UzGy4WOsyNDPJCESiIvNBUTzog==
+  version "5.7.0"
+  resolved "https://registry.yarnpkg.com/under-pressure/-/under-pressure-5.7.0.tgz#d4a1909dc649ffba74664d97ac3984e6ff6dd3ba"
+  integrity sha512-tR5fyBSB+4FqW5BzDXfLd9S7XbOV1ukRf0sOPu1ClJLKqjvqyF6LEEyaBkA8lMKyuLe2Pz72OHxV5zYGyd7N+w==
   dependencies:
     fastify-error "^0.3.0"
     fastify-plugin "^3.0.0"
