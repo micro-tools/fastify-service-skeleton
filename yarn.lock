@@ -2427,9 +2427,9 @@ husky@^7.0.0:
   integrity sha512-xK7lO0EtSzfFPiw+oQncQVy/XqV7UVVjxBByc+Iv5iK3yhW9boDoWgvZy3OGo48QKg/hUtZkzz0hi2HXa0kn7w==
 
 hyperid@^2.1.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/hyperid/-/hyperid-2.2.0.tgz#45774c76bd1d6c4e5b6a000c0c4a763420317491"
-  integrity sha512-jBgQB6PCqZOR9tlafXUKMPhy3m0K3MWKduNwEswutA13tptofMz4ztoHVqRPihD+0aO/8dhrJ5hOx3vPZcvgNw==
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/hyperid/-/hyperid-2.3.1.tgz#70cc2c917b6367c9f7307718be243bc28b258353"
+  integrity sha512-mIbI7Ymn6MCdODaW1/6wdf5lvvXzmPsARN4zTLakMmcziBOuP4PxCBJvHF6kbAIHX6H4vAELx/pDmt0j6Th5RQ==
   dependencies:
     uuid "^8.3.2"
     uuid-parse "^1.1.0"
