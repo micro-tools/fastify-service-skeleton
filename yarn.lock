@@ -723,11 +723,6 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-16.0.1.tgz#70cedfda26af7a2ca073fdcc9beb2fff4aa693f8"
   integrity sha512-hBOx4SUlEPKwRi6PrXuTGw1z6lz0fjsibcWCM378YxsSu/6+C30L6CR49zIBKHiwNWCYIcOLjg4OHKZaFeLAug==
 
-"@types/node@^15.3.0":
-  version "15.14.0"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-15.14.0.tgz#74dbf254fb375551a9d2a71faf6b9dbc2178dc53"
-  integrity sha512-um/+/ip3QZmwLfIkWZSNtQIJNVAqrJ92OkLMeuZrjZMTAJniI7fh8N8OICyDhAJ2mzgk/fmYFo72jRr5HyZ1EQ==
-
 "@types/normalize-package-data@^2.4.0":
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/@types/normalize-package-data/-/normalize-package-data-2.4.0.tgz#e486d0d97396d79beedd0a6e33f4534ff6b4973e"
@@ -3789,12 +3784,11 @@ picomatch@^2.0.4, picomatch@^2.0.5, picomatch@^2.2.1:
   integrity sha512-q0M/9eZHzmr0AulXyPwNfZjtwZ/RBZlbN3K3CErVrk50T2ASYI7Bye0EvekFY3IP1Nt2DHu0re+V2ZHIpMkuWg==
 
 pino-pretty@^5.0.0:
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/pino-pretty/-/pino-pretty-5.1.0.tgz#a7e6dcace4da4fd0d9763ff95957ebbf4b810fbb"
-  integrity sha512-fpDU80MKP59XOWxqV8crTDjRegC2fbDsA56zTr5s1guiv6QuYHILc9x1a4+o9SNPtfmF2kQdpAZS+bIExtbELQ==
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/pino-pretty/-/pino-pretty-5.1.1.tgz#387aebbe0c4504b9e3f6f51148e36d1b336cb16d"
+  integrity sha512-bG8a6A2QcZYJXD/ZL7PXn8CDNIUP5TKyQwR9Yjzn5dpGyQ7Wbyl707Dxhx+tPT3BG6YpsXF93Hhe9EUnx0SsPw==
   dependencies:
     "@hapi/bourne" "^2.0.0"
-    "@types/node" "^15.3.0"
     args "^5.0.1"
     chalk "^4.0.0"
     dateformat "^4.5.1"
