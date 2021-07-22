@@ -50,7 +50,7 @@
     "pino": "^6.11.2",
     "pino-pretty": "^5.0.0",
     "prom-client": "^13.1.0",
-    "remeda": "^0.0.28",
+    "remeda": "^0.0.29",
     "under-pressure": "^5.6.0",
     "uuid": "^8.3.2"
   },
