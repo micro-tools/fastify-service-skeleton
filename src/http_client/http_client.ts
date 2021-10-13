@@ -37,7 +37,7 @@ async function initHttpClient(
   )
 
   // Init request-specific client
-  app.decorateRequest("httpClient", null, ["correlationId"])
+  app.decorateRequest("httpClient", null)
   app.addHook("onRequest", (request, reply, done) => {
     request.httpClient = new HttpClientRequestDecoration(
       app.httpClient,
