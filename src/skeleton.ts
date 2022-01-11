@@ -10,7 +10,6 @@ import {
 } from "./logging/logging"
 import { Logger, LoggingOptions } from "./logging/logging.types"
 import { RootLogger } from "./logging/root_logger"
-import { orderlyExitProcess } from "./orderly_exit_process"
 import { healthCheckPlugin, HealthCheckOptions } from "./health_check"
 import { metricsPlugin, MetricsOptions } from "./metrics"
 import { httpClientPlugin, HttpClientPluginOptions } from "./http_client"
@@ -47,9 +46,6 @@ export function createServiceSkeleton(
   // Enable all plugins unless explicitly disabled by default,
   // but this behaviour can be modified via `enablePluginsByDefault`
   const isPluginEnabled = createIsOptionEnabled(opts.enablePluginsByDefault)
-  if (isPluginEnabled(opts.plugins?.orderlyExitProcess)) {
-    orderlyExitProcess(appLogger)
-  }
   if (isPluginEnabled(opts.plugins?.healthCheck)) {
     void app.register(healthCheckPlugin, opts.plugins?.healthCheck)
   }
@@ -102,7 +98,6 @@ export interface ServiceSkeletonOptions {
   logging?: Enableable<LoggingOptions>
   enablePluginsByDefault?: boolean
   plugins?: {
-    orderlyExitProcess?: boolean
     healthCheck?: Enableable<HealthCheckOptions>
     correlationId?: Enableable<CorrelationIdOptions>
     requestLogging?: Enableable<RequestLoggingOptions>

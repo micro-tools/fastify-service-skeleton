@@ -1,4 +1,3 @@
-import pino from "pino"
 import { FastifyServerOptions } from "fastify"
 import { ServiceSkeletonOptions } from "../skeleton"
 import { createRootLogger, RootLogger } from "./root_logger"
@@ -36,5 +35,3 @@ export function checkLoggingOptionsPlausibility(
     )
   }
 }
-
-export const createExitListener = pino.final

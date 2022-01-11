@@ -8,12 +8,7 @@ describe("serviceSkeleton", () => {
   const serviceName = "serviceSkeletonTest"
 
   it("starts with default configs", async () => {
-    const app = createServiceSkeleton({
-      serviceName,
-      plugins: {
-        orderlyExitProcess: false, // TODO: does not work when it is enabled
-      },
-    })
+    const app = createServiceSkeleton({ serviceName })
     await app.ready()
     await app.close()
   })
@@ -44,18 +39,8 @@ describe("serviceSkeleton", () => {
   })
 
   it("can be instantiated multiple times (e.g. for testing)", async () => {
-    const app1 = createServiceSkeleton({
-      serviceName,
-      plugins: {
-        orderlyExitProcess: false, // TODO: does not work when it is enabled
-      },
-    })
-    const app2 = createServiceSkeleton({
-      serviceName,
-      plugins: {
-        orderlyExitProcess: false, // TODO: does not work when it is enabled
-      },
-    })
+    const app1 = createServiceSkeleton({ serviceName })
+    const app2 = createServiceSkeleton({ serviceName })
     try {
       await Promise.all([app1.ready(), app2.ready()])
     } finally {
