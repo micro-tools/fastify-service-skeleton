@@ -1,6 +1,6 @@
 {
   "name": "fastify-service-skeleton",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "description": "Create fastify based microservices even faster.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -43,7 +43,7 @@
     "fastify": "^3.14.0",
     "fastify-plugin": "^3.0.0",
     "fastify-sensible": "^3.1.1",
-    "got": "^11.8.3",
+    "got": "^12.0.1",
     "hyperid": "^3.0.0",
     "lodash.merge": "^4.6.2",
     "pino": "^7.6.3",
