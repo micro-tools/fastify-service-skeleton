@@ -8,3 +8,5 @@ export interface LoggingOptions extends LoggerOptions {
   appLogger?: pino.LoggerOptions | boolean
   destination?: pino.DestinationStream
 }
+
+export type LogFn = pino.LogFn

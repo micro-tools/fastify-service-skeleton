@@ -1,8 +1,7 @@
-import { IncomingHttpHeaders } from "http"
 import fastifyPlugin from "fastify-plugin"
-import { iso8601WithLocalOffset } from "../utils/date_utils"
-import { LoggerOptions } from "./logging.types"
 import { RouteGenericInterface } from "fastify/types/route"
+import { iso8601WithLocalOffset } from "../utils/date_utils"
+import { LogFn, LoggerOptions } from "./logging.types"
 
 export const requestLoggingPlugin = fastifyPlugin(
   // eslint-disable-next-line @typescript-eslint/require-await
@@ -35,7 +34,7 @@ export const requestLoggingPlugin = fastifyPlugin(
           typeof reply.context.config.accessLogLevel === "string"
             ? reply.context.config.accessLogLevel
             : "info"
-        const logFn = accessLogger[logLevel] || accessLogger.info
+        const logFn: LogFn = accessLogger[logLevel] || accessLogger.info
         logFn.call<typeof accessLogger, [Record<string, unknown>], void>(
           accessLogger,
           {
@@ -62,9 +61,10 @@ export const requestLoggingPlugin = fastifyPlugin(
   { decorators: { fastify: ["rootLogger"], request: ["correlationId"] } }
 )
 
-function separateQueryStringFromUrl(
+function separateQueryStringFromUrl(url: string): {
   url: string
-): { url: string; queryString: string } {
+  queryString: string
+} {
   const querySeparatorIndex = url.indexOf("?")
   if (querySeparatorIndex > -1) {
     return {
