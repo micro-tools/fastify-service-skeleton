@@ -34,7 +34,8 @@ export const requestLoggingPlugin = fastifyPlugin(
           typeof reply.context.config.accessLogLevel === "string"
             ? reply.context.config.accessLogLevel
             : "info"
-        const logFn: LogFn = accessLogger[logLevel] || accessLogger.info
+        const logFn: LogFn =
+          (accessLogger[logLevel] as LogFn) || accessLogger.info
         logFn.call<typeof accessLogger, [Record<string, unknown>], void>(
           accessLogger,
           {
